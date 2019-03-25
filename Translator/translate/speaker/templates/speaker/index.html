@@ -19,9 +19,9 @@
 
     <form action="{% url 'index' %}" method="post">
         {% csrf_token %}
-        IHRE FORM
-        <br><br>
-        <input type="submit" name="Go" value="Übersetze">
+        <textarea name="TextE" rows="4" cols="50" style="width: 642px; height: 200px;">Bitte geben sie hier den zu übersetzenden Text ein:</textarea>
+        </br></br>
+        <input type="submit" name="Go" value="Übersetze" >
         <input type="submit" name="Ge2En" value="Deutsch => Englisch">
         <input type="submit" name="En2Ge" value="Englisch => Deutsch">
         <input type="submit" name="Synonym" value="Finde Synonyme">
