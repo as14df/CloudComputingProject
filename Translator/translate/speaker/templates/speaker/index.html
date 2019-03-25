@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{page.title}}</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'speaker/main.css' %}">
+
+    <!-- Bootstrap -->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+  </head>
+  <body>
+    <div id='main'>
+    <h1 class='headline'>Translate!</h1>
+    <!-- Form is hereafter --> 
+
+    <form action="{% url 'index' %}" method="post">
+        {% csrf_token %}
+        IHRE FORM
+        <br><br>
+        <input type="submit" name="Go" value="Übersetze">
+        <input type="submit" name="Ge2En" value="Deutsch => Englisch">
+        <input type="submit" name="En2Ge" value="Englisch => Deutsch">
+        <input type="submit" name="Synonym" value="Finde Synonyme">
+    </form>
+    <!-- TODO Hier Kann das Übersetzungsergebnis folgen -->
+    <h1 class='trans_result'> IHRE ÜBERSCHRIFT </h1>        
+    <div id='translation'>
+    IHR ÜBERSETZUNGSERGEBNIS
+    </div>
+        
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  </body>
+</html>
