@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
+from django.views import generic
 
 #from .models import dict_ge_en
 #from .forms import *
@@ -10,4 +11,4 @@ from django.http import HttpResponseRedirect
 #from .google_translate_snippets import *
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+	return render( request, 'speaker/index.html', None)

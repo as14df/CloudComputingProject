@@ -3,8 +3,9 @@ from django.db import models
 
 # TODO: Hier können SIe eine Klasse anlegen, die Ihr Modell erzeugt
 
-class  xxx(models.Model):
-    """A typical class defining a model, derived from the Model class."""
+class  Ger_Eng_Dict(models.Model):
+	german = models.CharField(max_length=4096)
+	english = models.CharField(max_length=4096)
 
     # Fields
     # TODO Fügen Sie hier Ihre Felder ein 
