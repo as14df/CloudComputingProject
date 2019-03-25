@@ -18,6 +18,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path(' TODO '),
-    path(' TODO '),
-]
+    path('', views.IndexView.as_view(), name='index'),
+   ]
+
