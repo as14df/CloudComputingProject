@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 # TODO eventuell weitere Imports
-import environ
+#import environ
 
 
 
@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # TODO 
 # Sie benötigen OOGLE_APPLICATION_CREDENTIALS
 # die könnten Sie hier einlesen
-environ.Env.read_env(BASE_DIR+  ihr_name)
+#environ.Env.read_env(BASE_DIR+  ihr_name)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -37,7 +37,7 @@ ALLOWED_HOSTS = []
 # TODO: hier müssen Sie Ihre Anwednung definieren
 
 INSTALLED_APPS = [
-
+	'speaker.apps.SpeakerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
