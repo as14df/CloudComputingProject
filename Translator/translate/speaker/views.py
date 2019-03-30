@@ -11,28 +11,26 @@ from django.views.decorators.csrf import csrf_exempt,csrf_protect
 # TODO Impord er Code Snippets für die Google Translation
 #from .google_translate_snippets import *
 
-from .models import GuiInfo
+from .models import GuiInfo, Ger_Eng_Dict
 
 @csrf_exempt
 def index(request):
-    trans = GuiInfo()
-    trans.german = ""
-    trans.english = ""
+
+    trans = GuiInfo(german = "", english = "")
 
     trans.fromLang = request.POST.get("fromLang", "Deutsch")
-    trans.toLang = request.POST.get("toLang", "Schwäbisch")
+    trans.toLang = request.POST.get("toLang", "Englisch")
 
     msg1 = request.POST.get("msg1", "");
 
     if 'translate' in request.POST:
         if msg1 != "":
             trans.german = msg1
-            trans.english = "Übersetung von " + msg1
+            translation = Ger_Eng_Dict.objects.get(german = msg1)
+            trans.english = translation.english
     elif 'changeLang' in request.POST:
         b = trans.toLang
         trans.toLang = trans.fromLang
         trans.fromLang = b;
-
-
 
     return render(request, 'speaker/index.html', {'trans': trans})
