@@ -8,8 +8,8 @@ class  Ger_Eng_Dict(models.Model):
 	english = models.CharField(max_length=4096)
 
 class  GuiInfo(models.Model):
-    german = models.CharField(max_length=4096)
-    english = models.CharField(max_length=4096)
+    msg1 = models.CharField(max_length=4096)
+    msg2 = models.CharField(max_length=4096)
     fromLang = models.CharField(max_length=256)
     toLang = models.CharField(max_length=256)
 

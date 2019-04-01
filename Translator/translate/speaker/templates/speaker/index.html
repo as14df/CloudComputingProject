@@ -52,16 +52,16 @@
                 {{trans.fromLang}} <span style="color:#ef6603"> > </span> {{trans.toLang}}
               <li class="form-group">
                 <li class="form-group">                    
-                  <textarea class="form_textarea" name="msg1" rows="12" data-rule="required" data-msg="Please write something for us" placeholder="{{trans.fromLang}}">{{trans.german}}</textarea>                  
+                  <textarea class="form_textarea" name="msg1" rows="12" data-rule="required" data-msg="Please write something for us" placeholder="{{trans.fromLang}}">{{trans.msg1}}</textarea>                  
                     <span style="color:#ef6603"> > </span>
-                  <textarea class="form_textarea" name="msg2" rows="12" readonly="true" data-rule="required" data-msg="Please write something for us" placeholder="{{trans.toLang}}">{{trans.english}}</textarea>
+                  <textarea class="form_textarea" name="msg2" rows="12" readonly="true" data-rule="required" data-msg="Please write something for us" placeholder="{{trans.toLang}}">{{trans.msg2}}</textarea>
                   <div class="validation"></div>
                 </li>
                 <li class="last">
                   <button class="btn btn-large btn-theme" type="submit" name="translate" id="send">Übersetzen</button>
                   <button class="btn btn-large btn-theme" type="submit" name="changeLang" id="send"><-></button>
-                  <input type="hidden" name="fromLang" id="send" hidden="true">{{trans.fromLang}}</button>
-                  <input type="hidden" name="toLang" id="send" hidden="true">{{trans.toLang}}</button>
+                  <input type="hidden" name="fromLang" value="{{trans.fromLang}}"/>
+                  <input type="hidden" name="toLang" value ="{{trans.toLang}}"/>
                 </li>
             </ul>
           </form>

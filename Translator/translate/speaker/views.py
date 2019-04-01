@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt,csrf_protect
-
+from google.cloud import translate
 #from .models import dict_ge_en
 #from .forms import *
 
@@ -15,8 +15,7 @@ from .models import GuiInfo, Ger_Eng_Dict
 
 @csrf_exempt
 def index(request):
-
-    trans = GuiInfo(german = "", english = "")
+    trans = GuiInfo(msg1 = "", msg2 = "")
 
     trans.fromLang = request.POST.get("fromLang", "Deutsch")
     trans.toLang = request.POST.get("toLang", "Englisch")
@@ -25,9 +24,29 @@ def index(request):
 
     if 'translate' in request.POST:
         if msg1 != "":
-            trans.german = msg1
-            translation = Ger_Eng_Dict.objects.get(german = msg1)
-            trans.english = translation.english
+            try:
+                if trans.fromLang == "Deutsch":
+                    trans.msg1 = msg1
+                    translation = Ger_Eng_Dict.objects.get(german = msg1)
+                    trans.msg2 = translation.english
+                else:
+                    trans.msg1 = msg1
+                    translation = Ger_Eng_Dict.objects.get(english = msg1)
+                    trans.msg2 = translation.german
+            except Exception as e:
+                translate_client = translate.Client() 
+                translation = ""
+
+                if trans.fromLang == "Deutsch":
+                    translation = translate_client.translate(msg1, target_language='en')
+                    obj = Ger_Eng_Dict(german=msg1, english=translation['translatedText'])
+                    
+                else:
+                    translation = translate_client.translate(msg1, target_language='ger')
+                    obj = Ger_Eng_Dict(german=translation['translatedText'], english=msg1)
+
+                obj.save()
+                trans.msg2 = translation['translatedText']                            
     elif 'changeLang' in request.POST:
         b = trans.toLang
         trans.toLang = trans.fromLang
