@@ -50,7 +50,7 @@
         <div class="span12">
           <form action="{% url 'index' %}" method="post" role="form">
             <ul class="contact-list">
-                {{trans.fromLang}} <span style="color:#ef6603"> > </span> {{trans.toLang}}
+                {{trans.fromLang}} <span style="color:#ef6603"> > </span> {{trans.toLang}} &nbsp;&nbsp;&nbsp;&nbsp; <button class="btn btn-large btn-theme" type="submit" name="changeLang" id="send" style="padding: 5px 10px;" ><img src="{% static 'speaker/images/twoArrows.png' %}" width="15" style="margin-bottom: 0px;" /></button>
               <li class="form-group">
                 <li class="form-group">                    
                   <textarea class="form_textarea" name="msg1" rows="12" data-rule="required" data-msg="Please write something for us" placeholder="{{trans.fromLang}}">{{trans.msg1}}</textarea>                  
@@ -60,7 +60,7 @@
                 </li>
                 <li class="last">
                   <button class="btn btn-large btn-theme" type="submit" name="translate" id="send">Übersetzen</button>
-                  <button class="btn btn-large btn-theme" type="submit" name="changeLang" id="send"><-></button>
+                  
                   <input type="hidden" name="fromLang" value="{{trans.fromLang}}"/>
                   <input type="hidden" name="toLang" value ="{{trans.toLang}}"/>
                 </li>
