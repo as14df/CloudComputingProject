@@ -1,2 +1,2 @@
 /Translator/UserSpecific/
-*.sqlite3
+/Translator/translate/*.sqlite3
