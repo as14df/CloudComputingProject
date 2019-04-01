@@ -21,6 +21,7 @@
     <link href="{% static 'speaker/css/sequencejs.css' %}" rel="stylesheet" media="screen">
     <link href="{% static 'speaker/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'speaker/color/default.css' %}" rel="stylesheet">
+    <link rel="shortcut icon" href="{% static 'speaker/ico/icon.ico' %}">
 
   </head>
   <body>
@@ -132,10 +133,10 @@
   <script src="{% static 'speaker/js/jquery.flexslider.js' %}"></script>
 
   <!-- Contact Form JavaScript File -->
-  <script src="contactform/contactform.js"></script>
+  <script src="{% static 'speaker/contactform/contactform.js' %}"></script>
 
   <!-- Template Custom Javascript File -->
-  <script src="js/custom.js"></script>
+  <script src="{% static 'speaker/js/custom.js' %}"></script>
 
   </body>
 </html>
