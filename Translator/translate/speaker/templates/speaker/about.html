@@ -36,45 +36,44 @@
           <div class="navigation">
             <nav>
               <ul class="nav pull-right">
-                <li class="current"><a href="#featured">Translate</a></li>
-                <li><a href="/speaker/about">About</a></li>
+                <li><a href="/speaker">Translate</a></li>
+                <li class="current"><a href="">About</a></li>
               </ul>
             </nav>
           </div>
         </div>
       </div>
     </div>
-  <section id="contact" class="section">
-    <div class="container">
-    <div class="row">
-        <div class="span12">
-          <form action="{% url 'index' %}" method="post" role="form">
-            <ul class="contact-list">
-                {{trans.fromLang}} <span style="color:#ef6603"> > </span> {{trans.toLang}} &nbsp;&nbsp;&nbsp;&nbsp; <button class="btn btn-large btn-theme" type="submit" name="changeLang" id="send" style="padding: 5px 10px;" ><img src="{% static 'speaker/images/twoArrows.png' %}" width="15" style="margin-bottom: 0px;" /></button>
-              <li class="form-group">
-                <li class="form-group">                    
-                  <textarea class="form_textarea" name="msg1" rows="12" data-rule="required" data-msg="Please write something for us" placeholder="{{trans.fromLang}}">{{trans.msg1}}</textarea>                  
-                    <span style="color:#ef6603"> > </span>
-                  <textarea class="form_textarea" name="msg2" rows="12" readonly="true" data-rule="required" data-msg="Please write something for us" placeholder="{{trans.toLang}}">{{trans.msg2}}</textarea>
-                  <div class="validation"></div>
+
+
+    <section id="featured">
+
+    <!-- sequence slider -->
+    <div id="sequence-theme">
+      <img class="prev" src="{% static 'speaker/img/bt-prev.png' %}" alt="Previous">
+      <img class="next" src="{% static 'speaker/img/bt-next.png' %}" alt="Next">
+      <div class="container">
+        <div class="row">
+          <div class="span12">
+            <div id="sequence">
+              <ul>
+                <li class="animate-in">
+                  <div class="info letter-container">
+                    <h2 class="fade">Übersetze. Jetzt!</h2>
+                  </div>
+                  <h4 class="subtitle">Der beschte Deutsch - Englisch Übersetzer. Und anders rum!</h4>
+                  <div class="bottomup">
+                    <img src="{% static 'speaker/img/pic1.png' %}" alt="">
+                  </div>
                 </li>
-                <li class="last">
-                  <button class="btn btn-large btn-theme" type="submit" name="translate" id="send">Übersetzen</button>
-                  
-                  <input type="hidden" name="fromLang" value="{{trans.fromLang}}"/>
-                  <input type="hidden" name="toLang" value ="{{trans.toLang}}"/>
-                </li>
-            </ul>
-          </form>
-          <!-- end contact form -->
-
+              </ul>
+            </div>
+          </div>
         </div>
-        </div>
-    </section>
-
-
-
-
+      </div>
+    </div>
+    <!-- end sequence slider -->
+  </section>
 
 
 

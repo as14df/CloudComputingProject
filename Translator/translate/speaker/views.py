@@ -53,3 +53,8 @@ def index(request):
         trans.fromLang = b;
 
     return render(request, 'speaker/index.html', {'trans': trans})
+
+def about(request):
+
+    return render(request, 'speaker/about.html', None)
+
