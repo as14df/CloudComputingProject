@@ -175,10 +175,10 @@ class Binding(_messages.Message):
   r"""Associates `members` with a `role`.
 
   Fields:
-    condition: Unimplemented. The condition that is associated with this
-      binding. NOTE: an unsatisfied condition will not allow user access via
-      current binding. Different bindings, including their conditions, are
-      examined independently.
+    condition: The condition that is associated with this binding. NOTE: an
+      unsatisfied condition will not allow user access via current binding.
+      Different bindings, including their conditions, are examined
+      independently.
     members: Specifies the identities requesting access for a Cloud Platform
       resource. `members` can have the following values:  * `allUsers`: A
       special identifier that represents anyone who is    on the internet;
@@ -190,8 +190,8 @@ class Binding(_messages.Message):
       service    account. For example, `my-other-
       app@appspot.gserviceaccount.com`.  * `group:{emailid}`: An email address
       that represents a Google group.    For example, `admins@example.com`.
-      * `domain:{domain}`: A Google Apps domain name that represents all the
-      users of that domain. For example, `google.com` or `example.com`.
+      * `domain:{domain}`: The G Suite domain (primary) that represents all
+      the    users of that domain. For example, `google.com` or `example.com`.
     role: Role that is assigned to `members`. For example, `roles/viewer`,
       `roles/editor`, or `roles/owner`.
   """
@@ -451,7 +451,10 @@ class IamOrganizationsRolesListRequest(_messages.Message):
   r"""A IamOrganizationsRolesListRequest object.
 
   Enums:
-    ViewValueValuesEnum: Optional view for the returned Role objects.
+    ViewValueValuesEnum: Optional view for the returned Role objects. When
+      `FULL` is specified, the `includedPermissions` field is returned, which
+      includes a list of all permissions in the role. The default value is
+      `BASIC`, which does not return the `includedPermissions` field.
 
   Fields:
     pageSize: Optional limit on the number of roles to include in the
@@ -462,11 +465,17 @@ class IamOrganizationsRolesListRequest(_messages.Message):
       formats: `` (empty string) -- this refers to curated roles.
       `organizations/{ORGANIZATION_ID}` `projects/{PROJECT_ID}`
     showDeleted: Include Roles that have been deleted.
-    view: Optional view for the returned Role objects.
+    view: Optional view for the returned Role objects. When `FULL` is
+      specified, the `includedPermissions` field is returned, which includes a
+      list of all permissions in the role. The default value is `BASIC`, which
+      does not return the `includedPermissions` field.
   """
 
   class ViewValueValuesEnum(_messages.Enum):
-    r"""Optional view for the returned Role objects.
+    r"""Optional view for the returned Role objects. When `FULL` is specified,
+    the `includedPermissions` field is returned, which includes a list of all
+    permissions in the role. The default value is `BASIC`, which does not
+    return the `includedPermissions` field.
 
     Values:
       BASIC: <no description>
@@ -557,7 +566,10 @@ class IamProjectsRolesListRequest(_messages.Message):
   r"""A IamProjectsRolesListRequest object.
 
   Enums:
-    ViewValueValuesEnum: Optional view for the returned Role objects.
+    ViewValueValuesEnum: Optional view for the returned Role objects. When
+      `FULL` is specified, the `includedPermissions` field is returned, which
+      includes a list of all permissions in the role. The default value is
+      `BASIC`, which does not return the `includedPermissions` field.
 
   Fields:
     pageSize: Optional limit on the number of roles to include in the
@@ -568,11 +580,17 @@ class IamProjectsRolesListRequest(_messages.Message):
       formats: `` (empty string) -- this refers to curated roles.
       `organizations/{ORGANIZATION_ID}` `projects/{PROJECT_ID}`
     showDeleted: Include Roles that have been deleted.
-    view: Optional view for the returned Role objects.
+    view: Optional view for the returned Role objects. When `FULL` is
+      specified, the `includedPermissions` field is returned, which includes a
+      list of all permissions in the role. The default value is `BASIC`, which
+      does not return the `includedPermissions` field.
   """
 
   class ViewValueValuesEnum(_messages.Enum):
-    r"""Optional view for the returned Role objects.
+    r"""Optional view for the returned Role objects. When `FULL` is specified,
+    the `includedPermissions` field is returned, which includes a list of all
+    permissions in the role. The default value is `BASIC`, which does not
+    return the `includedPermissions` field.
 
     Values:
       BASIC: <no description>
@@ -969,6 +987,22 @@ class IamProjectsServiceAccountsTestIamPermissionsRequest(_messages.Message):
   testIamPermissionsRequest = _messages.MessageField('TestIamPermissionsRequest', 2)
 
 
+class IamProjectsServiceAccountsUndeleteRequest(_messages.Message):
+  r"""A IamProjectsServiceAccountsUndeleteRequest object.
+
+  Fields:
+    name: The resource name of the service account in the following format:
+      `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT_UNIQUE_ID}'. Using `-`
+      as a wildcard for the `PROJECT_ID` will infer the project from the
+      account.
+    undeleteServiceAccountRequest: A UndeleteServiceAccountRequest resource to
+      be passed as the request body.
+  """
+
+  name = _messages.StringField(1, required=True)
+  undeleteServiceAccountRequest = _messages.MessageField('UndeleteServiceAccountRequest', 2)
+
+
 class IamRolesGetRequest(_messages.Message):
   r"""A IamRolesGetRequest object.
 
@@ -985,7 +1019,10 @@ class IamRolesListRequest(_messages.Message):
   r"""A IamRolesListRequest object.
 
   Enums:
-    ViewValueValuesEnum: Optional view for the returned Role objects.
+    ViewValueValuesEnum: Optional view for the returned Role objects. When
+      `FULL` is specified, the `includedPermissions` field is returned, which
+      includes a list of all permissions in the role. The default value is
+      `BASIC`, which does not return the `includedPermissions` field.
 
   Fields:
     pageSize: Optional limit on the number of roles to include in the
@@ -996,11 +1033,17 @@ class IamRolesListRequest(_messages.Message):
       formats: `` (empty string) -- this refers to curated roles.
       `organizations/{ORGANIZATION_ID}` `projects/{PROJECT_ID}`
     showDeleted: Include Roles that have been deleted.
-    view: Optional view for the returned Role objects.
+    view: Optional view for the returned Role objects. When `FULL` is
+      specified, the `includedPermissions` field is returned, which includes a
+      list of all permissions in the role. The default value is `BASIC`, which
+      does not return the `includedPermissions` field.
   """
 
   class ViewValueValuesEnum(_messages.Enum):
-    r"""Optional view for the returned Role objects.
+    r"""Optional view for the returned Role objects. When `FULL` is specified,
+    the `includedPermissions` field is returned, which includes a list of all
+    permissions in the role. The default value is `BASIC`, which does not
+    return the `includedPermissions` field.
 
     Values:
       BASIC: <no description>
@@ -1536,6 +1579,10 @@ class ServiceAccount(_messages.Message):
   value can be the `email` address or the `unique_id` of the service account.
 
   Fields:
+    description: Optional. A user-specified opaque description of the service
+      account. Must be less than or equal to 256 UTF-8 bytes.
+    disabled: @OutputOnly A bool indicate if the service account is disabled.
+      The field is currently in alpha phase.
     displayName: Optional. A user-specified name for the service account. Must
       be less than or equal to 100 UTF-8 bytes.
     email: @OutputOnly The email address of the service account.
@@ -1556,13 +1603,15 @@ class ServiceAccount(_messages.Message):
     uniqueId: @OutputOnly The unique and stable id of the service account.
   """
 
-  displayName = _messages.StringField(1)
-  email = _messages.StringField(2)
-  etag = _messages.BytesField(3)
-  name = _messages.StringField(4)
-  oauth2ClientId = _messages.StringField(5)
-  projectId = _messages.StringField(6)
-  uniqueId = _messages.StringField(7)
+  description = _messages.StringField(1)
+  disabled = _messages.BooleanField(2)
+  displayName = _messages.StringField(3)
+  email = _messages.StringField(4)
+  etag = _messages.BytesField(5)
+  name = _messages.StringField(6)
+  oauth2ClientId = _messages.StringField(7)
+  projectId = _messages.StringField(8)
+  uniqueId = _messages.StringField(9)
 
 
 class ServiceAccountIdentityBinding(_messages.Message):
@@ -1835,6 +1884,20 @@ class UndeleteRoleRequest(_messages.Message):
   """
 
   etag = _messages.BytesField(1)
+
+
+class UndeleteServiceAccountRequest(_messages.Message):
+  r"""The service account undelete request."""
+
+
+class UndeleteServiceAccountResponse(_messages.Message):
+  r"""A UndeleteServiceAccountResponse object.
+
+  Fields:
+    restoredAccount: Metadata for the restored service account.
+  """
+
+  restoredAccount = _messages.MessageField('ServiceAccount', 1)
 
 
 encoding.AddCustomJsonFieldMapping(

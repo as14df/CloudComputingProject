@@ -27,10 +27,10 @@ class Binding(_messages.Message):
   r"""Associates `members` with a `role`.
 
   Fields:
-    condition: Unimplemented. The condition that is associated with this
-      binding. NOTE: an unsatisfied condition will not allow user access via
-      current binding. Different bindings, including their conditions, are
-      examined independently.
+    condition: The condition that is associated with this binding. NOTE: an
+      unsatisfied condition will not allow user access via current binding.
+      Different bindings, including their conditions, are examined
+      independently.
     members: Specifies the identities requesting access for a Cloud Platform
       resource. `members` can have the following values:  * `allUsers`: A
       special identifier that represents anyone who is    on the internet;
@@ -42,8 +42,8 @@ class Binding(_messages.Message):
       service    account. For example, `my-other-
       app@appspot.gserviceaccount.com`.  * `group:{emailid}`: An email address
       that represents a Google group.    For example, `admins@example.com`.
-      * `domain:{domain}`: A Google Apps domain name that represents all the
-      users of that domain. For example, `google.com` or `example.com`.
+      * `domain:{domain}`: The G Suite domain (primary) that represents all
+      the    users of that domain. For example, `google.com` or `example.com`.
     role: Role that is assigned to `members`. For example, `roles/viewer`,
       `roles/editor`, or `roles/owner`.
   """
@@ -54,10 +54,7 @@ class Binding(_messages.Message):
 
 
 class CreateSnapshotRequest(_messages.Message):
-  r"""Request for the `CreateSnapshot` method.<br><br> <b>BETA:</b> This
-  feature is part of a beta release. This API might be changed in backward-
-  incompatible ways and is not recommended for production use. It is not
-  subject to any SLA or deprecation policy.
+  r"""Request for the `CreateSnapshot` method.
 
   Messages:
     LabelsValue: See <a href="https://cloud.google.com/pubsub/docs/labels">
@@ -157,10 +154,7 @@ class Expr(_messages.Message):
 
 
 class ListSnapshotsResponse(_messages.Message):
-  r"""Response for the `ListSnapshots` method.<br><br> <b>BETA:</b> This
-  feature is part of a beta release. This API might be changed in backward-
-  incompatible ways and is not recommended for production use. It is not
-  subject to any SLA or deprecation policy.
+  r"""Response for the `ListSnapshots` method.
 
   Fields:
     nextPageToken: If not empty, indicates that there may be more snapshot
@@ -188,10 +182,7 @@ class ListSubscriptionsResponse(_messages.Message):
 
 
 class ListTopicSnapshotsResponse(_messages.Message):
-  r"""Response for the `ListTopicSnapshots` method.<br><br> <b>BETA:</b> This
-  feature is part of a beta release. This API might be changed in backward-
-  incompatible ways and is not recommended for production use. It is not
-  subject to any SLA or deprecation policy.
+  r"""Response for the `ListTopicSnapshots` method.
 
   Fields:
     nextPageToken: If not empty, indicates that there may be more snapshots
@@ -280,6 +271,29 @@ class ModifyPushConfigRequest(_messages.Message):
   """
 
   pushConfig = _messages.MessageField('PushConfig', 1)
+
+
+class OidcToken(_messages.Message):
+  r"""Contains information needed for generating an [OpenID Connect
+  token](https://developers.google.com/identity/protocols/OpenIDConnect).
+
+  Fields:
+    audience: Audience to be used when generating OIDC token. The audience
+      claim identifies the recipients that the JWT is intended for. The
+      audience value is a single case-sensitive string. Having multiple values
+      (array) for the audience field is not supported. More info about the
+      OIDC JWT token audience here:
+      https://tools.ietf.org/html/rfc7519#section-4.1.3 Note: if not
+      specified, the Push endpoint URL will be used.
+    serviceAccountEmail: [Service account
+      email](https://cloud.google.com/iam/docs/service-accounts) to be used
+      for generating the OIDC token. The caller (for CreateSubscription,
+      UpdateSubscription, and ModifyPushConfig RPCs) must have the
+      iam.serviceAccounts.actAs permission for the service account.
+  """
+
+  audience = _messages.StringField(1)
+  serviceAccountEmail = _messages.StringField(2)
 
 
 class Policy(_messages.Message):
@@ -895,6 +909,9 @@ class PushConfig(_messages.Message):
       for this attribute are:  * `v1beta1`: uses the push format defined in
       the v1beta1 Pub/Sub API. * `v1` or `v1beta2`: uses the push format
       defined in the v1 Pub/Sub API.
+    oidcToken: If specified, Pub/Sub will generate and attach an OIDC JWT
+      token as an `Authorization` header in the HTTP request for every pushed
+      message.
     pushEndpoint: A URL locating the endpoint to which messages should be
       pushed. For example, a Webhook endpoint might use
       "https://example.com/push".
@@ -939,7 +956,8 @@ class PushConfig(_messages.Message):
     additionalProperties = _messages.MessageField('AdditionalProperty', 1, repeated=True)
 
   attributes = _messages.MessageField('AttributesValue', 1)
-  pushEndpoint = _messages.StringField(2)
+  oidcToken = _messages.MessageField('OidcToken', 2)
+  pushEndpoint = _messages.StringField(3)
 
 
 class ReceivedMessage(_messages.Message):
@@ -955,10 +973,7 @@ class ReceivedMessage(_messages.Message):
 
 
 class SeekRequest(_messages.Message):
-  r"""Request for the `Seek` method. <br><br> <b>BETA:</b> This feature is
-  part of a beta release. This API might be changed in backward-incompatible
-  ways and is not recommended for production use. It is not subject to any SLA
-  or deprecation policy.
+  r"""Request for the `Seek` method.
 
   Fields:
     snapshot: The snapshot to seek to. The snapshot's topic must be the same
@@ -1002,10 +1017,7 @@ class Snapshot(_messages.Message):
   href="https://cloud.google.com/pubsub/docs/replay-overview">Seek</a>
   operations, which allow you to manage message acknowledgments in bulk. That
   is, you can set the acknowledgment state of messages in an existing
-  subscription to the state captured by a snapshot.<br><br> <b>BETA:</b> This
-  feature is part of a beta release. This API might be changed in backward-
-  incompatible ways and is not recommended for production use. It is not
-  subject to any SLA or deprecation policy.
+  subscription to the state captured by a snapshot.
 
   Messages:
     LabelsValue: See <a href="https://cloud.google.com/pubsub/docs/labels">
@@ -1164,10 +1176,7 @@ class Subscription(_messages.Message):
       `retain_acked_messages` is true, then this also configures the retention
       of acknowledged messages, and thus configures how far back in time a
       `Seek` can be done. Defaults to 7 days. Cannot be more than 7 days or
-      less than 10 minutes.<br><br> <b>BETA:</b> This feature is part of a
-      beta release. This API might be changed in backward-incompatible ways
-      and is not recommended for production use. It is not subject to any SLA
-      or deprecation policy.
+      less than 10 minutes.
     name: The name of the subscription. It must have the format
       `"projects/{project}/subscriptions/{subscription}"`. `{subscription}`
       must start with a letter, and contain only letters (`[A-Za-z]`), numbers
@@ -1182,10 +1191,7 @@ class Subscription(_messages.Message):
       even if they are acknowledged, until they fall out of the
       `message_retention_duration` window. This must be true if you would like
       to <a href="https://cloud.google.com/pubsub/docs/replay-
-      overview#seek_to_a_time"> Seek to a timestamp</a>. <br><br> <b>BETA:</b>
-      This feature is part of a beta release. This API might be changed in
-      backward-incompatible ways and is not recommended for production use. It
-      is not subject to any SLA or deprecation policy.
+      overview#seek_to_a_time"> Seek to a timestamp</a>.
     topic: The name of the topic from which this subscription is receiving
       messages. Format is `projects/{project}/topics/{topic}`. The value of
       this field will be `_deleted-topic_` if the topic has been deleted.
@@ -1258,6 +1264,9 @@ class Topic(_messages.Message):
       Creating and managing labels</a>.
 
   Fields:
+    kmsKeyName: The resource name of the Cloud KMS CryptoKey to be used to
+      protect access to messages published on this topic.  The expected format
+      is `projects/*/locations/*/keyRings/*/cryptoKeys/*`.
     labels: See <a href="https://cloud.google.com/pubsub/docs/labels">
       Creating and managing labels</a>.
     messageStoragePolicy: Policy constraining how messages published to the
@@ -1300,16 +1309,14 @@ class Topic(_messages.Message):
 
     additionalProperties = _messages.MessageField('AdditionalProperty', 1, repeated=True)
 
-  labels = _messages.MessageField('LabelsValue', 1)
-  messageStoragePolicy = _messages.MessageField('MessageStoragePolicy', 2)
-  name = _messages.StringField(3)
+  kmsKeyName = _messages.StringField(1)
+  labels = _messages.MessageField('LabelsValue', 2)
+  messageStoragePolicy = _messages.MessageField('MessageStoragePolicy', 3)
+  name = _messages.StringField(4)
 
 
 class UpdateSnapshotRequest(_messages.Message):
-  r"""Request for the UpdateSnapshot method.<br><br> <b>BETA:</b> This feature
-  is part of a beta release. This API might be changed in backward-
-  incompatible ways and is not recommended for production use. It is not
-  subject to any SLA or deprecation policy.
+  r"""Request for the UpdateSnapshot method.
 
   Fields:
     snapshot: The updated snapshot object.

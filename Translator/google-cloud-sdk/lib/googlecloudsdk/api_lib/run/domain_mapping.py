@@ -28,9 +28,13 @@ class DomainMapping(k8s_object.KubernetesObject):
   nested Kubernetes-style fields.
   """
 
-  API_CATEGORY = 'serving.knative.dev'
+  API_CATEGORY = 'domains.cloudrun.com'
   KIND = 'DomainMapping'
 
   @property
   def route_name(self):
     return self.spec.routeName
+
+  @route_name.setter
+  def route_name(self, value):
+    self._m.spec.routeName = value

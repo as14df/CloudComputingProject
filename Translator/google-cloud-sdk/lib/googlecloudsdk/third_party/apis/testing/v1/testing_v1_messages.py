@@ -27,13 +27,13 @@ class AndroidDevice(_messages.Message):
 
   Fields:
     androidModelId: Required. The id of the Android device to be used. Use the
-      EnvironmentDiscoveryService to get supported options.
+      TestEnvironmentDiscoveryService to get supported options.
     androidVersionId: Required. The id of the Android OS version to be used.
-      Use the EnvironmentDiscoveryService to get supported options.
+      Use the TestEnvironmentDiscoveryService to get supported options.
     locale: Required. The locale the test device used for testing. Use the
-      EnvironmentDiscoveryService to get supported options.
+      TestEnvironmentDiscoveryService to get supported options.
     orientation: Required. How the device is oriented during the test. Use the
-      EnvironmentDiscoveryService to get supported options.
+      TestEnvironmentDiscoveryService to get supported options.
   """
 
   androidModelId = _messages.StringField(1)
@@ -156,13 +156,15 @@ class AndroidMatrix(_messages.Message):
 
   Fields:
     androidModelIds: Required. The ids of the set of Android device to be
-      used. Use the EnvironmentDiscoveryService to get supported options.
+      used. Use the TestEnvironmentDiscoveryService to get supported options.
     androidVersionIds: Required. The ids of the set of Android OS version to
-      be used. Use the EnvironmentDiscoveryService to get supported options.
+      be used. Use the TestEnvironmentDiscoveryService to get supported
+      options.
     locales: Required. The set of locales the test device will enable for
-      testing. Use the EnvironmentDiscoveryService to get supported options.
+      testing. Use the TestEnvironmentDiscoveryService to get supported
+      options.
     orientations: Required. The set of orientations to test with. Use the
-      EnvironmentDiscoveryService to get supported options.
+      TestEnvironmentDiscoveryService to get supported options.
   """
 
   androidModelIds = _messages.StringField(1, repeated=True)
@@ -654,13 +656,13 @@ class IosDevice(_messages.Message):
 
   Fields:
     iosModelId: Required. The id of the iOS device to be used. Use the
-      EnvironmentDiscoveryService to get supported options.
+      TestEnvironmentDiscoveryService to get supported options.
     iosVersionId: Required. The id of the iOS major software version to be
-      used. Use the EnvironmentDiscoveryService to get supported options.
+      used. Use the TestEnvironmentDiscoveryService to get supported options.
     locale: Required. The locale the test device used for testing. Use the
-      EnvironmentDiscoveryService to get supported options.
+      TestEnvironmentDiscoveryService to get supported options.
     orientation: Required. How the device is oriented during the test. Use the
-      EnvironmentDiscoveryService to get supported options.
+      TestEnvironmentDiscoveryService to get supported options.
   """
 
   iosModelId = _messages.StringField(1)
@@ -800,8 +802,8 @@ class IosXcTest(_messages.Message):
       contents of the DerivedData/Build/Products directory. The .xctestrun
       file in this zip is ignored if the xctestrun field is specified.
     xcodeVersion: The Xcode version that should be used for the test. Use the
-      EnvironmentDiscoveryService to get supported options. Defaults to the
-      latest Xcode version Firebase Test Lab supports.
+      TestEnvironmentDiscoveryService to get supported options. Defaults to
+      the latest Xcode version Firebase Test Lab supports.
     xctestrun: An .xctestrun file that will override the .xctestrun file in
       the tests zip. Because the .xctestrun file contains environment
       variables along with test methods to run and/or ignore, this can be
@@ -974,10 +976,12 @@ class RoboDirective(_messages.Message):
         specified element is not clickable.
       ENTER_TEXT: Direct Robo to enter text on the specified element. No-op if
         specified element is not enabled or does not allow text entry.
+      IGNORE: Direct Robo to ignore interactions with a specific element.
     """
     ACTION_TYPE_UNSPECIFIED = 0
     SINGLE_CLICK = 1
     ENTER_TEXT = 2
+    IGNORE = 3
 
   actionType = _messages.EnumField('ActionTypeValueValuesEnum', 1)
   inputText = _messages.StringField(2)
@@ -990,10 +994,12 @@ class RoboStartingIntent(_messages.Message):
   Fields:
     launcherActivity: A LauncherActivityIntent attribute.
     startActivity: A StartActivityIntent attribute.
+    timeout: Timeout in seconds for each intent.
   """
 
   launcherActivity = _messages.MessageField('LauncherActivityIntent', 1)
   startActivity = _messages.MessageField('StartActivityIntent', 2)
+  timeout = _messages.StringField(3)
 
 
 class StandardQueryParameters(_messages.Message):
@@ -1227,6 +1233,9 @@ class TestMatrix(_messages.Message):
       MALFORMED_TEST_APK: The input test APK could not be parsed.
       NO_MANIFEST: The AndroidManifest.xml could not be found.
       NO_PACKAGE_NAME: The APK manifest does not declare a package name.
+      INVALID_PACKAGE_NAME: The APK application ID (aka package name) is
+        invalid. See also https://developer.android.com/studio/build
+        /application-id
       TEST_SAME_AS_APP: The test package and app package are the same.
       NO_INSTRUMENTATION: The test apk does not declare an instrumentation.
       NO_SIGNATURE: The input app apk does not have a signature.
@@ -1245,6 +1254,11 @@ class TestMatrix(_messages.Message):
         not allowed.
       INVALID_ROBO_DIRECTIVES: There is a conflict in the provided
         robo_directives.
+      INVALID_RESOURCE_NAME: There is at least one invalid resource name in
+        the provided robo directives
+      INVALID_DIRECTIVE_ACTION: Invalid definition of action in the robo
+        directives (e.g. a click or ignore action includes an input text
+        field)
       TEST_LOOP_INTENT_FILTER_NOT_FOUND: There there is no test loop intent
         filter, or the one that is given is not formatted correctly.
       SCENARIO_LABEL_NOT_DECLARED: The request contains a scenario label that
@@ -1288,30 +1302,33 @@ class TestMatrix(_messages.Message):
     MALFORMED_TEST_APK = 3
     NO_MANIFEST = 4
     NO_PACKAGE_NAME = 5
-    TEST_SAME_AS_APP = 6
-    NO_INSTRUMENTATION = 7
-    NO_SIGNATURE = 8
-    INSTRUMENTATION_ORCHESTRATOR_INCOMPATIBLE = 9
-    NO_TEST_RUNNER_CLASS = 10
-    NO_LAUNCHER_ACTIVITY = 11
-    FORBIDDEN_PERMISSIONS = 12
-    INVALID_ROBO_DIRECTIVES = 13
-    TEST_LOOP_INTENT_FILTER_NOT_FOUND = 14
-    SCENARIO_LABEL_NOT_DECLARED = 15
-    SCENARIO_LABEL_MALFORMED = 16
-    SCENARIO_NOT_DECLARED = 17
-    DEVICE_ADMIN_RECEIVER = 18
-    MALFORMED_XC_TEST_ZIP = 19
-    BUILT_FOR_IOS_SIMULATOR = 20
-    NO_TESTS_IN_XC_TEST_ZIP = 21
-    USE_DESTINATION_ARTIFACTS = 22
-    TEST_NOT_APP_HOSTED = 23
-    PLIST_CANNOT_BE_PARSED = 24
-    TEST_ONLY_APK = 25
-    MALFORMED_IPA = 26
-    NO_CODE_APK = 27
-    INVALID_INPUT_APK = 28
-    INVALID_APK_PREVIEW_SDK = 29
+    INVALID_PACKAGE_NAME = 6
+    TEST_SAME_AS_APP = 7
+    NO_INSTRUMENTATION = 8
+    NO_SIGNATURE = 9
+    INSTRUMENTATION_ORCHESTRATOR_INCOMPATIBLE = 10
+    NO_TEST_RUNNER_CLASS = 11
+    NO_LAUNCHER_ACTIVITY = 12
+    FORBIDDEN_PERMISSIONS = 13
+    INVALID_ROBO_DIRECTIVES = 14
+    INVALID_RESOURCE_NAME = 15
+    INVALID_DIRECTIVE_ACTION = 16
+    TEST_LOOP_INTENT_FILTER_NOT_FOUND = 17
+    SCENARIO_LABEL_NOT_DECLARED = 18
+    SCENARIO_LABEL_MALFORMED = 19
+    SCENARIO_NOT_DECLARED = 20
+    DEVICE_ADMIN_RECEIVER = 21
+    MALFORMED_XC_TEST_ZIP = 22
+    BUILT_FOR_IOS_SIMULATOR = 23
+    NO_TESTS_IN_XC_TEST_ZIP = 24
+    USE_DESTINATION_ARTIFACTS = 25
+    TEST_NOT_APP_HOSTED = 26
+    PLIST_CANNOT_BE_PARSED = 27
+    TEST_ONLY_APK = 28
+    MALFORMED_IPA = 29
+    NO_CODE_APK = 30
+    INVALID_INPUT_APK = 31
+    INVALID_APK_PREVIEW_SDK = 32
 
   class StateValueValuesEnum(_messages.Enum):
     r"""Output only. Indicates the current progress of the test matrix (e.g.,
@@ -1411,13 +1428,6 @@ class TestSpecification(_messages.Message):
     androidInstrumentationTest: An Android instrumentation test.
     androidRoboTest: An Android robo test.
     androidTestLoop: An Android Application with a Test Loop.
-    autoGoogleLogin: Enables automatic Google account login. If set, the
-      service will automatically generate a Google test account and add it to
-      the device, before executing the test. Note that test accounts might be
-      reused. Many applications show their full set of functionalities when an
-      account is present on the device. Logging into the device with these
-      generated accounts allows testing more functionalities. Default is
-      false.
     disablePerformanceMetrics: Disables performance metrics recording; may
       reduce test latency.
     disableVideoRecording: Disables video recording; may reduce test latency.
@@ -1432,13 +1442,12 @@ class TestSpecification(_messages.Message):
   androidInstrumentationTest = _messages.MessageField('AndroidInstrumentationTest', 1)
   androidRoboTest = _messages.MessageField('AndroidRoboTest', 2)
   androidTestLoop = _messages.MessageField('AndroidTestLoop', 3)
-  autoGoogleLogin = _messages.BooleanField(4)
-  disablePerformanceMetrics = _messages.BooleanField(5)
-  disableVideoRecording = _messages.BooleanField(6)
-  iosTestSetup = _messages.MessageField('IosTestSetup', 7)
-  iosXcTest = _messages.MessageField('IosXcTest', 8)
-  testSetup = _messages.MessageField('TestSetup', 9)
-  testTimeout = _messages.StringField(10)
+  disablePerformanceMetrics = _messages.BooleanField(4)
+  disableVideoRecording = _messages.BooleanField(5)
+  iosTestSetup = _messages.MessageField('IosTestSetup', 6)
+  iosXcTest = _messages.MessageField('IosXcTest', 7)
+  testSetup = _messages.MessageField('TestSetup', 8)
+  testTimeout = _messages.StringField(9)
 
 
 class TestingProjectsTestMatricesCancelRequest(_messages.Message):

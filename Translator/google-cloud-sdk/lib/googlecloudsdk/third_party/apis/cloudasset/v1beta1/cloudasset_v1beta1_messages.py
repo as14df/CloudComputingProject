@@ -116,10 +116,10 @@ class Binding(_messages.Message):
   r"""Associates `members` with a `role`.
 
   Fields:
-    condition: Unimplemented. The condition that is associated with this
-      binding. NOTE: an unsatisfied condition will not allow user access via
-      current binding. Different bindings, including their conditions, are
-      examined independently.
+    condition: The condition that is associated with this binding. NOTE: an
+      unsatisfied condition will not allow user access via current binding.
+      Different bindings, including their conditions, are examined
+      independently.
     members: Specifies the identities requesting access for a Cloud Platform
       resource. `members` can have the following values:  * `allUsers`: A
       special identifier that represents anyone who is    on the internet;
@@ -131,8 +131,8 @@ class Binding(_messages.Message):
       service    account. For example, `my-other-
       app@appspot.gserviceaccount.com`.  * `group:{emailid}`: An email address
       that represents a Google group.    For example, `admins@example.com`.
-      * `domain:{domain}`: A Google Apps domain name that represents all the
-      users of that domain. For example, `google.com` or `example.com`.
+      * `domain:{domain}`: The G Suite domain (primary) that represents all
+      the    users of that domain. For example, `google.com` or `example.com`.
     role: Role that is assigned to `members`. For example, `roles/viewer`,
       `roles/editor`, or `roles/owner`.
   """
@@ -140,6 +140,32 @@ class Binding(_messages.Message):
   condition = _messages.MessageField('Expr', 1)
   members = _messages.StringField(2, repeated=True)
   role = _messages.StringField(3)
+
+
+class CloudassetFoldersExportAssetsRequest(_messages.Message):
+  r"""A CloudassetFoldersExportAssetsRequest object.
+
+  Fields:
+    exportAssetsRequest: A ExportAssetsRequest resource to be passed as the
+      request body.
+    parent: Required. The relative name of the root asset. This can only be an
+      organization number (such as "organizations/123"), a project ID (such as
+      "projects/my-project-id"), a project number (such as "projects/12345"),
+      or a folder number (such as "folders/123").
+  """
+
+  exportAssetsRequest = _messages.MessageField('ExportAssetsRequest', 1)
+  parent = _messages.StringField(2, required=True)
+
+
+class CloudassetFoldersOperationsGetRequest(_messages.Message):
+  r"""A CloudassetFoldersOperationsGetRequest object.
+
+  Fields:
+    name: The name of the operation resource.
+  """
+
+  name = _messages.StringField(1, required=True)
 
 
 class CloudassetOrganizationsBatchGetAssetsHistoryRequest(_messages.Message):
@@ -192,8 +218,8 @@ class CloudassetOrganizationsExportAssetsRequest(_messages.Message):
       request body.
     parent: Required. The relative name of the root asset. This can only be an
       organization number (such as "organizations/123"), a project ID (such as
-      "projects/my-project-id"), or a project number (such as
-      "projects/12345").
+      "projects/my-project-id"), a project number (such as "projects/12345"),
+      or a folder number (such as "folders/123").
   """
 
   exportAssetsRequest = _messages.MessageField('ExportAssetsRequest', 1)
@@ -260,8 +286,8 @@ class CloudassetProjectsExportAssetsRequest(_messages.Message):
       request body.
     parent: Required. The relative name of the root asset. This can only be an
       organization number (such as "organizations/123"), a project ID (such as
-      "projects/my-project-id"), or a project number (such as
-      "projects/12345").
+      "projects/my-project-id"), a project number (such as "projects/12345"),
+      or a folder number (such as "folders/123").
   """
 
   exportAssetsRequest = _messages.MessageField('ExportAssetsRequest', 1)

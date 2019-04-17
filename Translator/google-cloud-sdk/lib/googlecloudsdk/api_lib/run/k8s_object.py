@@ -39,10 +39,13 @@ def InitializedInstance(msg_cls):
   Returns:
     An instance of the given class, with all fields initialized blank objects.
   """
+  def Instance(field):
+    if field.repeated:
+      return []
+    return InitializedInstance(field.message_type)
+
   args = {
-      field.name: ([] if field.repeated else
-                   InitializedInstance(field.message_type))
-      for field in msg_cls.all_fields()
+      field.name: Instance(field) for field in msg_cls.all_fields()
       if isinstance(field, messages.MessageField)
   }
   return msg_cls(**args)
@@ -215,6 +218,11 @@ class KubernetesObject(object):
   @property
   def labels(self):
     self.AssertFullObject()
+
+    if not self._m.metadata.labels:
+      self._m.metadata.labels = self._messages.ObjectMeta.LabelsValue(
+          additionalProperties=[])
+
     return ListAsDictionaryWrapper(
         self._m.metadata.labels.additionalProperties,
         self._messages.ObjectMeta.LabelsValue.AdditionalProperty,

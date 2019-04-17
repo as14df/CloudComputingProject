@@ -189,7 +189,10 @@ def AddAssignIp(parser, show_negated_in_help=False):
   kwargs = _GetKwargsForBoolFlag(show_negated_in_help)
   parser.add_argument(
       '--assign-ip',
-      help='If provided, instance must be assigned an IP address.', **kwargs)
+      help='Assign an IPv4 external address to this instance.  This setting is '
+           'enabled by default.  To create an instance which only has a '
+           'private IP, use --no-assign-ip and specify a private network.',
+      **kwargs)
 
 
 def AddAuthorizedGAEApps(parser, update=False):
@@ -254,6 +257,26 @@ def AddDatabaseFlags(parser, update=False):
       metavar='FLAG=VALUE',
       required=False,
       help=help_)
+
+
+def AddDatabaseVersion(parser, restrict_choices=True):
+  """Adds `--database-version` to the parser with choices restricted or not."""
+  choices = ['MYSQL_5_5', 'MYSQL_5_6', 'MYSQL_5_7', 'POSTGRES_9_6']
+  help_text = (
+      'The database engine type and version. If left unspecified, the API '
+      'defaults will be used.')
+  if not restrict_choices:
+    help_text = ' '.join([
+        help_text,
+        'See the list of database versions at '
+        'https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances'
+        '#databaseVersion'
+    ])
+  parser.add_argument(
+      '--database-version',
+      required=False,
+      choices=choices if restrict_choices else None,
+      help=help_text)
 
 
 def AddCPU(parser):

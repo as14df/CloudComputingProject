@@ -39,7 +39,7 @@ class ServiceManagement(base.Group):
   found here: https://cloud.google.com/service-management/docs/
   """
 
-  category = base.GCLOUD_API_PLATFORM_AND_ECOSYSTEMS_CATEGORY
+  category = base.API_PLATFORM_AND_ECOSYSTEMS_CATEGORY
 
   def Filter(self, context, args):
     """Context() is a filter function that can update the context.
@@ -58,9 +58,5 @@ class ServiceManagement(base.Group):
         'servicemanagement', 'v1')
     context['servicemanagement-v1-messages'] = apis.GetMessagesModule(
         'servicemanagement', 'v1')
-
-    context['apikeys-v1'] = apis.GetClientInstance('apikeys', 'v1')
-    context['apikeys-v1-messages'] = apis.GetMessagesModule(
-        'apikeys', 'v1')
 
     return context

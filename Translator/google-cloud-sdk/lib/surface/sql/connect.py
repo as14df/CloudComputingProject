@@ -87,7 +87,10 @@ def _WhitelistClientIP(instance_ref, sql_client, sql_messages, resources,
       expirationTime=iso_duration.Duration(
           minutes=minutes).GetRelativeDateTime(time_of_connection)
       # TODO(b/122989827): Remove this once the datetime parsing is fixed.
-      .replace(microsecond=1),
+      # Setting the microseconds component to 10 milliseconds. This complies
+      # with backend formatting restrictions, since backend requires a microsecs
+      # component and anything less than 1 milli will get truncated.
+      .replace(microsecond=10000),
       value='CLIENT_IP')
 
   try:

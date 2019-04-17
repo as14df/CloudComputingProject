@@ -63,7 +63,7 @@ def CreateNatMessage(args, compute_holder, with_logging=False):
     if args.enable_logging is not None or args.log_filter is not None:
       log_config = compute_holder.client.messages.RouterNatLogConfig()
 
-      log_config.enabled = args.enable_logging
+      log_config.enable = args.enable_logging
       if args.log_filter is not None:
         log_config.filter = _TranslateLogFilter(args.log_filter, compute_holder)
 
@@ -117,12 +117,10 @@ def UpdateNatMessage(nat, args, compute_holder, with_logging=False):
       nat.logConfig = (
           nat.logConfig or compute_holder.client.messages.RouterNatLogConfig())
     if args.enable_logging is not None:
-      nat.logConfig.enabled = args.enable_logging
+      nat.logConfig.enable = args.enable_logging
     if args.log_filter is not None:
       nat.logConfig.filter = _TranslateLogFilter(args.log_filter,
                                                  compute_holder)
-    elif args.clear_log_filter:
-      nat.logConfig.filter = None
 
   return nat
 
@@ -219,6 +217,9 @@ def _ParseNatIpFields(args, compute_holder):
 
 def _TranslateLogFilter(filter_str, compute_holder):
   """Translates the specified log filter to the enum value."""
+  if filter_str == 'ALL':
+    return (compute_holder.client.messages.RouterNatLogConfig
+            .FilterValueValuesEnum.ALL)
   if filter_str == 'TRANSLATIONS_ONLY':
     return (compute_holder.client.messages.RouterNatLogConfig
             .FilterValueValuesEnum.TRANSLATIONS_ONLY)
@@ -227,5 +228,5 @@ def _TranslateLogFilter(filter_str, compute_holder):
             .FilterValueValuesEnum.ERRORS_ONLY)
 
   raise calliope_exceptions.InvalidArgumentException(
-      '--log-filter', ('--log-filter must be TRANSLATIONS_ONLY '
+      '--log-filter', ('--log-filter must be ALL, TRANSLATIONS_ONLY '
                        'or ERRORS_ONLY'))

@@ -56,12 +56,6 @@ def AddBaseArgs(parser):
   flags.AddBackupStartTime(parser)
   flags.AddCPU(parser)
   flags.AddDatabaseFlags(parser)
-  parser.add_argument(
-      '--database-version',
-      required=False,
-      choices=['MYSQL_5_5', 'MYSQL_5_6', 'MYSQL_5_7', 'POSTGRES_9_6'],
-      help=('The database engine type and version. If left unspecified, the '
-            'API defaults will be used.'))
   flags.AddEnableBinLog(parser, show_negated_in_help=False)
   parser.add_argument(
       '--failover-replica-name',
@@ -266,6 +260,7 @@ class Create(base.Command):
   def Args(parser):
     """Args is called by calliope to gather arguments for this command."""
     AddBaseArgs(parser)
+    flags.AddDatabaseVersion(parser)
 
 
 @base.ReleaseTracks(base.ReleaseTrack.BETA, base.ReleaseTrack.ALPHA)
@@ -280,3 +275,4 @@ class CreateBeta(base.Command):
     """Args is called by calliope to gather arguments for this command."""
     AddBaseArgs(parser)
     AddBetaArgs(parser)
+    flags.AddDatabaseVersion(parser, restrict_choices=False)

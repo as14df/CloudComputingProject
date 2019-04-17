@@ -126,7 +126,7 @@ def NamespaceAttributeConfig():
   return concepts.ResourceParameterAttributeConfig(
       name='namespace',
       help_text='Specific to Cloud Run on Kubernetes Engine: '
-      'The Kubernetes namespace for the {resource}',
+      'Kubernetes namespace for the {resource}',
       fallthroughs=[
           deps.PropertyFallthrough(properties.VALUES.run.namespace),
           DefaultFallthrough(),
@@ -145,33 +145,40 @@ def ServiceAttributeConfig(prompt=False):
     fallthroughs = []
   return concepts.ResourceParameterAttributeConfig(
       name='service',
-      help_text='The Service for the {resource}.',
+      help_text='Service for the {resource}.',
       fallthroughs=fallthroughs)
 
 
 def ConfigurationAttributeConfig():
   return concepts.ResourceParameterAttributeConfig(
       name='configuration',
-      help_text='The Configuration for the {resource}.')
+      help_text='Configuration for the {resource}.')
 
 
 def RouteAttributeConfig():
   return concepts.ResourceParameterAttributeConfig(
       name='route',
-      help_text='The Route for the {resource}.')
+      help_text='Route for the {resource}.')
 
 
 def RevisionAttributeConfig():
   return concepts.ResourceParameterAttributeConfig(
       name='revision',
-      help_text='The Revision for the {resource}.')
+      help_text='Revision for the {resource}.')
+
+
+def DomainAttributeConfig():
+  return concepts.ResourceParameterAttributeConfig(
+      name='domain',
+      help_text='Name of the domain to be mapped to.')
 
 
 def ClusterAttributeConfig():
   return concepts.ResourceParameterAttributeConfig(
       name='cluster',
       help_text='Specific to Cloud Run on Kubernetes Engine: '
-      'The name of the Kubernetes Engine cluster to use.',
+      'Name of the Kubernetes Engine cluster to use. Alternatively, set the'
+      ' property [run/cluster].',
       fallthroughs=[
           deps.PropertyFallthrough(properties.VALUES.run.cluster)])
 
@@ -180,7 +187,8 @@ def ClusterLocationAttributeConfig():
   return concepts.ResourceParameterAttributeConfig(
       name='location',
       help_text='Specific to Cloud Run on Kubernetes Engine: '
-      'The location of the {resource}.',
+      'Location of the {resource}. Alternatively, set the '
+      'property [run/cluster_location].',
       fallthroughs=[
           deps.PropertyFallthrough(
               properties.VALUES.run.cluster_location)])
@@ -197,7 +205,7 @@ def GetClusterResourceSpec():
 
 def GetServiceResourceSpec(prompt=False):
   return concepts.ResourceSpec(
-      'serverless.namespaces.services',
+      'run.namespaces.services',
       namespacesId=NamespaceAttributeConfig(),
       servicesId=ServiceAttributeConfig(prompt),
       resource_name='service')
@@ -205,7 +213,7 @@ def GetServiceResourceSpec(prompt=False):
 
 def GetConfigurationResourceSpec():
   return concepts.ResourceSpec(
-      'serverless.namespaces.configurations',
+      'run.namespaces.configurations',
       namespacesId=NamespaceAttributeConfig(),
       configurationsId=ConfigurationAttributeConfig(),
       resource_name='configuration')
@@ -213,7 +221,7 @@ def GetConfigurationResourceSpec():
 
 def GetRouteResourceSpec():
   return concepts.ResourceSpec(
-      'serverless.namespaces.routes',
+      'run.namespaces.routes',
       namespacesId=NamespaceAttributeConfig(),
       routesId=RouteAttributeConfig(),
       resource_name='route')
@@ -221,15 +229,23 @@ def GetRouteResourceSpec():
 
 def GetRevisionResourceSpec():
   return concepts.ResourceSpec(
-      'serverless.namespaces.revisions',
+      'run.namespaces.revisions',
       namespacesId=NamespaceAttributeConfig(),
       revisionsId=RevisionAttributeConfig(),
       resource_name='revision')
 
 
+def GetDomainMappingResourceSpec():
+  return concepts.ResourceSpec(
+      'run.namespaces.domainmappings',
+      namespacesId=NamespaceAttributeConfig(),
+      domainmappingsId=DomainAttributeConfig(),
+      resource_name='DomainMapping')
+
+
 def GetNamespaceResourceSpec():
   return concepts.ResourceSpec(
-      'serverless.namespaces',
+      'run.namespaces',
       namespacesId=NamespaceAttributeConfig(),
       resource_name='namespace')
 
@@ -238,7 +254,7 @@ CLUSTER_PRESENTATION = presentation_specs.ResourcePresentationSpec(
     '--cluster',
     GetClusterResourceSpec(),
     'Specific to Cloud Run on Kubernetes Engine: '
-    'The Kubernetes Engine cluster to connect to.',
+    'Kubernetes Engine cluster to connect to.',
     required=False,
     prefixes=True)
 

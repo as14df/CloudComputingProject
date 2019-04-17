@@ -3,7 +3,7 @@
 localhost#
 # Sie können mehrere Server zu einer Gruppe zusammenfassen und dann im Playbook die Gruppe ansprechen
 [ServerGruppe]
-35.239.213.18 ansible_python_interpreter=/usr/bin/python3
+35.192.61.26 ansible_python_interpreter=/usr/bin/python3
 
 # Hier folgen alle Server die zu "ServerGruppe" gehören 
 # Hinter dem Servernamen können Sie Variablen für diesen Server definieren als "Leerzeichen"-getrennte Liste von Key-Value Paaren

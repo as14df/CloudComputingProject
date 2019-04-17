@@ -35,7 +35,6 @@ from googlecloudsdk.api_lib.compute import metadata_utils
 from googlecloudsdk.api_lib.compute import path_simplifier
 from googlecloudsdk.api_lib.compute import utils
 from googlecloudsdk.calliope import exceptions
-from googlecloudsdk.command_lib.compute import iap_tunnel
 from googlecloudsdk.command_lib.util.ssh import ssh
 from googlecloudsdk.core import exceptions as core_exceptions
 from googlecloudsdk.core import log
@@ -46,7 +45,6 @@ from googlecloudsdk.core.console import progress_tracker
 # The maximum amount of time to wait for a newly-added SSH key to
 # propagate before giving up.
 SSH_KEY_PROPAGATION_TIMEOUT_SEC = 60
-DEFAULT_SSH_PORT = 22
 
 _TROUBLESHOOTING_URL = (
     'https://cloud.google.com/compute/docs/troubleshooting#ssherrors')
@@ -328,8 +326,7 @@ class BaseSSHHelper(object):
     env: ssh.Environment, the current environment, used by subclasses.
   """
 
-  # Attributes for pytype
-  keys = None  # type: ssh.Keys
+  keys = None
 
   @staticmethod
   def Args(parser):
@@ -681,7 +678,7 @@ class BaseSSHCLIHelper(BaseSSHHelper):
         .format(metadata_id_url, instance_id)]
     cmd = ssh.SSHCommand(remote, identity_file=identity_file,
                          options=options, remote_command=remote_command)
-    return_code = cmd.Run(self.env, force_connect=True)  # pytype: disable=attribute-error
+    return_code = cmd.Run(self.env, force_connect=True)
     if return_code == 0:
       return
     elif return_code == 23:
@@ -709,22 +706,14 @@ def GetUserAndInstance(user_host):
       .format(user_host))
 
 
-def CreateIapTunnelHelper(args, instance_ref, instance, port=DEFAULT_SSH_PORT):
-  """Creates an IAP Tunnel helper for SSH connections."""
-  interface = GetInternalInterface(instance)
-  tunnel_helper = iap_tunnel.IapTunnelConnectionHelper(
-      args, instance_ref.project, instance_ref.zone, instance.name,
-      interface.name, int(port) if port else DEFAULT_SSH_PORT)
-  return tunnel_helper
-
-
-def CreateSSHPoller(remote, identity_file, options, iap_tunnel_helper,
+def CreateSSHPoller(remote, identity_file, options, iap_tunnel_args,
                     extra_flags=None, port=None):
   """Creates and returns an SSH poller."""
 
   ssh_poller_args = {'remote': remote,
                      'identity_file': identity_file,
                      'options': options,
+                     'iap_tunnel_args': iap_tunnel_args,
                      'extra_flags': extra_flags,
                      'max_wait_ms': SSH_KEY_PROPAGATION_TIMEOUT_SEC}
 
@@ -732,9 +721,5 @@ def CreateSSHPoller(remote, identity_file, options, iap_tunnel_helper,
   # specifying a custom port (b/121998342).
   if port:
     ssh_poller_args['port'] = str(port)
-
-  if iap_tunnel_helper:
-    ssh_poller_args['remote'] = ssh.Remote('localhost', remote.user)
-    ssh_poller_args['port'] = str(iap_tunnel_helper.GetLocalPort())
 
   return ssh.SSHPoller(**ssh_poller_args)

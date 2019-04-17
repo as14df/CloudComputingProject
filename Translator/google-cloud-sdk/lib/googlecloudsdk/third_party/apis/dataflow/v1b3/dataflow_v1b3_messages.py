@@ -1574,6 +1574,10 @@ class DynamicSourceSplit(_messages.Message):
 class Environment(_messages.Message):
   r"""Describes the environment in which a Dataflow Job runs.
 
+  Enums:
+    FlexResourceSchedulingGoalValueValuesEnum: Which Flexible Resource
+      Scheduling mode to run in.
+
   Messages:
     InternalExperimentsValue: Experimental settings.
     SdkPipelineOptionsValue: The Cloud Dataflow SDK pipeline options specified
@@ -1593,6 +1597,8 @@ class Environment(_messages.Message):
       related tables are stored.  The supported resource type is:  Google
       BigQuery:   bigquery.googleapis.com/{dataset}
     experiments: The list of experiments to enable.
+    flexResourceSchedulingGoal: Which Flexible Resource Scheduling mode to run
+      in.
     internalExperiments: Experimental settings.
     sdkPipelineOptions: The Cloud Dataflow SDK pipeline options specified by
       the user. These options are passed through the service and are used to
@@ -1600,6 +1606,10 @@ class Environment(_messages.Message):
       and platform independent way.
     serviceAccountEmail: Identity to run virtual machines as. Defaults to the
       default account.
+    serviceKmsKeyName: If set, contains the Cloud KMS key identifier used to
+      encrypt data at rest, AKA a Customer Managed Encryption Key (CMEK).
+      Format:
+      projects/PROJECT_ID/locations/LOCATION/keyRings/KEY_RING/cryptoKeys/KEY
     tempStoragePrefix: The prefix of the resources the system should use for
       temporary storage.  The system will append the suffix "/temp-{JOBNAME}
       to this resource prefix, where {JOBNAME} is the value of the job_name
@@ -1615,6 +1625,18 @@ class Environment(_messages.Message):
     workerPools: The worker pools. At least one "harness" worker pool must be
       specified in order for the job to have workers.
   """
+
+  class FlexResourceSchedulingGoalValueValuesEnum(_messages.Enum):
+    r"""Which Flexible Resource Scheduling mode to run in.
+
+    Values:
+      FLEXRS_UNSPECIFIED: Run in the default mode.
+      FLEXRS_SPEED_OPTIMIZED: Optimize for lower execution time.
+      FLEXRS_COST_OPTIMIZED: Optimize for lower cost.
+    """
+    FLEXRS_UNSPECIFIED = 0
+    FLEXRS_SPEED_OPTIMIZED = 1
+    FLEXRS_COST_OPTIMIZED = 2
 
   @encoding.MapUnrecognizedFields('additionalProperties')
   class InternalExperimentsValue(_messages.Message):
@@ -1722,13 +1744,15 @@ class Environment(_messages.Message):
   clusterManagerApiService = _messages.StringField(1)
   dataset = _messages.StringField(2)
   experiments = _messages.StringField(3, repeated=True)
-  internalExperiments = _messages.MessageField('InternalExperimentsValue', 4)
-  sdkPipelineOptions = _messages.MessageField('SdkPipelineOptionsValue', 5)
-  serviceAccountEmail = _messages.StringField(6)
-  tempStoragePrefix = _messages.StringField(7)
-  userAgent = _messages.MessageField('UserAgentValue', 8)
-  version = _messages.MessageField('VersionValue', 9)
-  workerPools = _messages.MessageField('WorkerPool', 10, repeated=True)
+  flexResourceSchedulingGoal = _messages.EnumField('FlexResourceSchedulingGoalValueValuesEnum', 4)
+  internalExperiments = _messages.MessageField('InternalExperimentsValue', 5)
+  sdkPipelineOptions = _messages.MessageField('SdkPipelineOptionsValue', 6)
+  serviceAccountEmail = _messages.StringField(7)
+  serviceKmsKeyName = _messages.StringField(8)
+  tempStoragePrefix = _messages.StringField(9)
+  userAgent = _messages.MessageField('UserAgentValue', 10)
+  version = _messages.MessageField('VersionValue', 11)
+  workerPools = _messages.MessageField('WorkerPool', 12, repeated=True)
 
 
 class ExecutionStageState(_messages.Message):
@@ -4547,6 +4571,8 @@ class StreamingConfigTask(_messages.Message):
       families.
 
   Fields:
+    maxWorkItemCommitBytes: Maximum size for work item commit supported
+      windmill storage layer.
     streamingComputationConfigs: Set of computation configuration information.
     userStepToStateFamilyNameMap: Map from user step names to state families.
     windmillServiceEndpoint: If present, the worker must use this endpoint to
@@ -4584,10 +4610,11 @@ class StreamingConfigTask(_messages.Message):
 
     additionalProperties = _messages.MessageField('AdditionalProperty', 1, repeated=True)
 
-  streamingComputationConfigs = _messages.MessageField('StreamingComputationConfig', 1, repeated=True)
-  userStepToStateFamilyNameMap = _messages.MessageField('UserStepToStateFamilyNameMapValue', 2)
-  windmillServiceEndpoint = _messages.StringField(3)
-  windmillServicePort = _messages.IntegerField(4)
+  maxWorkItemCommitBytes = _messages.IntegerField(1)
+  streamingComputationConfigs = _messages.MessageField('StreamingComputationConfig', 2, repeated=True)
+  userStepToStateFamilyNameMap = _messages.MessageField('UserStepToStateFamilyNameMapValue', 3)
+  windmillServiceEndpoint = _messages.StringField(4)
+  windmillServicePort = _messages.IntegerField(5)
 
 
 class StreamingSetupTask(_messages.Message):

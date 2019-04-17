@@ -93,7 +93,7 @@ def _Args(parser):
 class ScpGA(base.Command):
   """Copy files to and from Google Compute Engine virtual machines via scp."""
 
-  category = base.COMPUTE_TOOLS_CATEGORY
+  category = base.TOOLS_CATEGORY
 
   @staticmethod
   def Args(parser):
@@ -155,7 +155,7 @@ class ScpBeta(ScpGA):
         [](https://cloud.google.com/compute/docs/instances/connecting-advanced#sshbetweeninstances).
         """)
 
-    iap_tunnel.AddConnectionHelperArgs(parser, mutex_scope)
+    iap_tunnel.AddSshTunnelArgs(parser, mutex_scope)
 
   def Run(self, args):
     """See scp_utils.BaseScpCommand.Run."""

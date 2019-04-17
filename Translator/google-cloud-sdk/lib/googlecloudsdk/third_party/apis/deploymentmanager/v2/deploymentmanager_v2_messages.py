@@ -72,10 +72,10 @@ class Binding(_messages.Message):
   r"""Associates `members` with a `role`.
 
   Fields:
-    condition: Unimplemented. The condition that is associated with this
-      binding. NOTE: an unsatisfied condition will not allow user access via
-      current binding. Different bindings, including their conditions, are
-      examined independently.
+    condition: The condition that is associated with this binding. NOTE: an
+      unsatisfied condition will not allow user access via current binding.
+      Different bindings, including their conditions, are examined
+      independently.
     members: Specifies the identities requesting access for a Cloud Platform
       resource. `members` can have the following values:  * `allUsers`: A
       special identifier that represents anyone who is on the internet; with
@@ -86,9 +86,9 @@ class Binding(_messages.Message):
       * `serviceAccount:{emailid}`: An email address that represents a service
       account. For example, `my-other-app@appspot.gserviceaccount.com`.  *
       `group:{emailid}`: An email address that represents a Google group. For
-      example, `admins@example.com`.    * `domain:{domain}`: A Google Apps
-      domain name that represents all the users of that domain. For example,
-      `google.com` or `example.com`.
+      example, `admins@example.com`.    * `domain:{domain}`: The G Suite
+      domain (primary) that represents all the users of that domain. For
+      example, `google.com` or `example.com`.
     role: Role that is assigned to `members`. For example, `roles/viewer`,
       `roles/editor`, or `roles/owner`.
   """
@@ -107,17 +107,14 @@ class Condition(_messages.Message):
     svc: Trusted attributes discharged by the service.
     sys: Trusted attributes supplied by any service that owns resources and
       uses the IAM system for access control.
-    value: DEPRECATED. Use 'values' instead.
-    values: The objects of the condition. This is mutually exclusive with
-      'value'.
+    values: The objects of the condition.
   """
 
   iam = _messages.StringField(1)
   op = _messages.StringField(2)
   svc = _messages.StringField(3)
   sys = _messages.StringField(4)
-  value = _messages.StringField(5)
-  values = _messages.StringField(6, repeated=True)
+  values = _messages.StringField(5, repeated=True)
 
 
 class ConfigFile(_messages.Message):
@@ -150,7 +147,8 @@ class Deployment(_messages.Message):
       long and must conform to the following regular expression:
       [a-z]([-a-z0-9]*[a-z0-9])? Label values must be between 0 and 63
       characters long and must conform to the regular expression
-      ([a-z]([-a-z0-9]*[a-z0-9])?)?
+      ([a-z]([-a-z0-9]*[a-z0-9])?)? TODO(b/124441274): clean up label after
+      migration to op is complete
     manifest: Output only. URL of the manifest representing the last manifest
       that was successfully deployed.
     name: Name of the resource; provided by the client when the resource is
@@ -208,7 +206,8 @@ class DeploymentUpdate(_messages.Message):
       1 and 63 characters long and must conform to the following regular
       expression: [a-z]([-a-z0-9]*[a-z0-9])? Label values must be between 0
       and 63 characters long and must conform to the regular expression
-      ([a-z]([-a-z0-9]*[a-z0-9])?)?
+      ([a-z]([-a-z0-9]*[a-z0-9])?)? TODO(b/124441274): clean up label after
+      migration to op is complete
     manifest: Output only. URL of the manifest representing the update
       configuration of this deployment.
   """

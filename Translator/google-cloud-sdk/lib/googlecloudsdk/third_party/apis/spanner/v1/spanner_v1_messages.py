@@ -189,6 +189,33 @@ class BackupInfo(_messages.Message):
   sourceDatabase = _messages.StringField(3)
 
 
+class BatchCreateSessionsRequest(_messages.Message):
+  r"""The request for BatchCreateSessions.
+
+  Fields:
+    sessionCount: Required. The number of sessions to be created in this batch
+      call. The API may return fewer than the requested number of sessions. If
+      a specific number of sessions are desired, the client can make
+      additional calls to BatchCreateSessions (adjusting session_count as
+      necessary). The maximum allowed sessions are documented at
+      https://goo.gl/hBUQED.
+    sessionTemplate: Parameters to be applied to each created session.
+  """
+
+  sessionCount = _messages.IntegerField(1, variant=_messages.Variant.INT32)
+  sessionTemplate = _messages.MessageField('Session', 2)
+
+
+class BatchCreateSessionsResponse(_messages.Message):
+  r"""The response for BatchCreateSessions.
+
+  Fields:
+    session: The freshly created sessions.
+  """
+
+  session = _messages.MessageField('Session', 1, repeated=True)
+
+
 class BeginTransactionRequest(_messages.Message):
   r"""The request for BeginTransaction.
 
@@ -203,10 +230,10 @@ class Binding(_messages.Message):
   r"""Associates `members` with a `role`.
 
   Fields:
-    condition: Unimplemented. The condition that is associated with this
-      binding. NOTE: an unsatisfied condition will not allow user access via
-      current binding. Different bindings, including their conditions, are
-      examined independently.
+    condition: The condition that is associated with this binding. NOTE: an
+      unsatisfied condition will not allow user access via current binding.
+      Different bindings, including their conditions, are examined
+      independently.
     members: Specifies the identities requesting access for a Cloud Platform
       resource. `members` can have the following values:  * `allUsers`: A
       special identifier that represents anyone who is    on the internet;
@@ -218,8 +245,8 @@ class Binding(_messages.Message):
       service    account. For example, `my-other-
       app@appspot.gserviceaccount.com`.  * `group:{emailid}`: An email address
       that represents a Google group.    For example, `admins@example.com`.
-      * `domain:{domain}`: A Google Apps domain name that represents all the
-      users of that domain. For example, `google.com` or `example.com`.
+      * `domain:{domain}`: The G Suite domain (primary) that represents all
+      the    users of that domain. For example, `google.com` or `example.com`.
     role: Role that is assigned to `members`. For example, `roles/viewer`,
       `roles/editor`, or `roles/owner`.
   """
@@ -329,9 +356,7 @@ class Condition(_messages.Message):
     svc: Trusted attributes discharged by the service.
     sys: Trusted attributes supplied by any service that owns resources and
       uses the IAM system for access control.
-    value: DEPRECATED. Use 'values' instead.
-    values: The objects of the condition. This is mutually exclusive with
-      'value'.
+    values: The objects of the condition.
   """
 
   class IamValueValuesEnum(_messages.Enum):
@@ -422,8 +447,7 @@ class Condition(_messages.Message):
   op = _messages.EnumField('OpValueValuesEnum', 2)
   svc = _messages.StringField(3)
   sys = _messages.EnumField('SysValueValuesEnum', 4)
-  value = _messages.StringField(5)
-  values = _messages.StringField(6, repeated=True)
+  values = _messages.StringField(5, repeated=True)
 
 
 class CounterOptions(_messages.Message):
@@ -471,20 +495,6 @@ class CreateBackupMetadata(_messages.Message):
   progress = _messages.MessageField('OperationProgress', 4)
 
 
-class CreateBackupRequest(_messages.Message):
-  r"""A CreateBackupRequest object.
-
-  Fields:
-    backup: Required. The backup to create.
-    backupId: Required. The id of the backup to be created. The `backup_id`
-      appended to `parent` forms the full backup name of the form
-      `projects/<project>/instances/<instance>/backups/<backup_id>`.
-  """
-
-  backup = _messages.MessageField('Backup', 1)
-  backupId = _messages.StringField(2)
-
-
 class CreateDatabaseMetadata(_messages.Message):
   r"""Metadata type for the operation returned by CreateDatabase.
 
@@ -504,6 +514,7 @@ class CreateDatabaseRequest(_messages.Message):
       expression `a-z*[a-z0-9]` and be between 2 and 30 characters in length.
       If the database ID is a reserved word or if it contains a hyphen, the
       database ID must be enclosed in backticks (`` ` ``).
+    encryptionConfig: A EncryptionConfig attribute.
     extraStatements: An optional list of DDL statements to run inside the
       newly created database. Statements can create tables, indexes, etc.
       These statements execute atomically with the creation of the database:
@@ -511,7 +522,8 @@ class CreateDatabaseRequest(_messages.Message):
   """
 
   createStatement = _messages.StringField(1)
-  extraStatements = _messages.StringField(2, repeated=True)
+  encryptionConfig = _messages.MessageField('EncryptionConfig', 2)
+  extraStatements = _messages.StringField(3, repeated=True)
 
 
 class CreateInstanceMetadata(_messages.Message):
@@ -540,7 +552,7 @@ class CreateInstanceRequest(_messages.Message):
     instance: Required. The instance to create.  The name may be omitted, but
       if specified must be `<parent>/instances/<instance_id>`.
     instanceId: Required. The ID of the instance to create.  Valid identifiers
-      are of the form `a-z*[a-z0-9]` and must be between 6 and 30 characters
+      are of the form `a-z*[a-z0-9]` and must be between 2 and 64 characters
       in length.
   """
 
@@ -620,6 +632,9 @@ class Database(_messages.Message):
 
   Fields:
     createTime: A string attribute.
+    encryptionConfig: Output only. Custom encryption configuration (Cloud KMS
+      keys). Applicable only for databases using the Customer Managed
+      Encryption Keys feature.
     name: Required. The name of the database. Values are of the form
       `projects/<project>/instances/<instance>/databases/<database>`, where
       `<database>` is as specified in the `CREATE DATABASE` statement. This
@@ -644,9 +659,10 @@ class Database(_messages.Message):
     READY_OPTIMIZING = 3
 
   createTime = _messages.StringField(1)
-  name = _messages.StringField(2)
-  restoreInfo = _messages.MessageField('RestoreInfo', 3)
-  state = _messages.EnumField('StateValueValuesEnum', 4)
+  encryptionConfig = _messages.MessageField('EncryptionConfig', 2)
+  name = _messages.StringField(3)
+  restoreInfo = _messages.MessageField('RestoreInfo', 4)
+  state = _messages.EnumField('StateValueValuesEnum', 5)
 
 
 class Delete(_messages.Message):
@@ -673,6 +689,20 @@ class Empty(_messages.Message):
 
 
 
+class EncryptionConfig(_messages.Message):
+  r"""Encryption configuration describing key resources in Cloud KMS used to
+  encrypt/decrypt a Cloud Spanner database.
+
+  Fields:
+    kmsKey: A required resource name of the Cloud KMS key that was used to
+      encrypt and decrypt the database. The form of the kms_key is `projects/[
+      PROJECT_ID]/locations/[LOCATION]/keyRings/[KEY_RING]/cryptoKeys/kms_key>
+      `.
+  """
+
+  kmsKey = _messages.StringField(1)
+
+
 class ExecuteBatchDmlRequest(_messages.Message):
   r"""The request for ExecuteBatchDml
 
@@ -684,7 +714,7 @@ class ExecuteBatchDmlRequest(_messages.Message):
       are executed serially, such that the effects of statement i are visible
       to statement i+1. Each statement must be a DML statement. Execution will
       stop at the first failed statement; the remaining statements will not
-      run.  REQUIRES: statements_size() > 0.
+      run.  REQUIRES: `statements_size()` > 0.
     transaction: The transaction to use. A ReadWrite transaction is required.
       Single-use transactions are not supported (to avoid replay).  The caller
       must either supply an existing transaction ID or begin a new
@@ -701,15 +731,15 @@ class ExecuteBatchDmlResponse(_messages.Message):
   each DML statement that has successfully executed. If a statement fails, the
   error is returned as part of the response payload. Clients can determine
   whether all DML statements have run successfully, or if a statement failed,
-  using one of the following approaches:    1. Check if 'status' field is
-  OkStatus.   2. Check if result_sets_size() equals the number of statements
-  in      ExecuteBatchDmlRequest.  Example 1: A request with 5 DML statements,
-  all executed successfully. Result: A response with 5 ResultSets, one for
-  each statement in the same order, and an OK status.  Example 2: A request
-  with 5 DML statements. The 3rd statement has a syntax error. Result: A
-  response with 2 ResultSets, for the first 2 statements that run
-  successfully, and a syntax error (INVALID_ARGUMENT) status. From
-  result_set_size() client can determine that the 3rd statement has failed.
+  using one of the following approaches:    1. Check if `'status'` field is
+  `OkStatus`.   2. Check if `result_sets_size()` equals the number of
+  statements in      ExecuteBatchDmlRequest.  Example 1: A request with 5 DML
+  statements, all executed successfully.  Result: A response with 5
+  ResultSets, one for each statement in the same order, and an `OkStatus`.
+  Example 2: A request with 5 DML statements. The 3rd statement has a syntax
+  error.  Result: A response with 2 ResultSets, for the first 2 statements
+  that run successfully, and a syntax error (`INVALID_ARGUMENT`) status. From
+  `result_set_size()` client can determine that the 3rd statement has failed.
 
   Fields:
     resultSets: ResultSets, one for each statement in the request that ran
@@ -1000,7 +1030,7 @@ class Instance(_messages.Message):
     name: Required. A unique identifier for the instance, which cannot be
       changed after the instance is created. Values are of the form
       `projects/<project>/instances/a-z*[a-z0-9]`. The final segment of the
-      name must be between 6 and 30 characters in length.
+      name must be between 2 and 64 characters in length.
     nodeCount: Required. The number of nodes allocated to this instance. This
       may be zero in API responses for instances that are not yet in state
       `READY`.  See [the documentation](https://cloud.google.com/spanner/docs/
@@ -1207,7 +1237,9 @@ class ListBackupsResponse(_messages.Message):
   r"""A ListBackupsResponse object.
 
   Fields:
-    backups: The list of matching backups.
+    backups: The list of matching backups. Backups returned are ordered by
+      `create_time` in descending order, starting from the most recent
+      `create_time`.
     nextPageToken: `next_page_token` can be sent in a subsequent ListBackups
       call to fetch more of the matching backups.
   """
@@ -1459,6 +1491,18 @@ class OperationProgress(_messages.Message):
   endTime = _messages.StringField(1)
   progressPercent = _messages.IntegerField(2, variant=_messages.Variant.INT32)
   startTime = _messages.StringField(3)
+
+
+class OptimizeRestoredDatabaseMetadata(_messages.Message):
+  r"""A OptimizeRestoredDatabaseMetadata object.
+
+  Fields:
+    name: Name of the restored database being optimized.
+    progress: The progress of the post-restore optimizations.
+  """
+
+  name = _messages.StringField(1)
+  progress = _messages.MessageField('OperationProgress', 2)
 
 
 class PartialResultSet(_messages.Message):
@@ -2059,6 +2103,51 @@ class ReplicaInfo(_messages.Message):
   type = _messages.EnumField('TypeValueValuesEnum', 3)
 
 
+class RestoreDatabaseMetadata(_messages.Message):
+  r"""A RestoreDatabaseMetadata object.
+
+  Enums:
+    SourceTypeValueValuesEnum: The type of the restore source.
+
+  Fields:
+    backupInfo: Information about the backup used to restore the database.
+    cancelTime: The time at which this operation was cancelled. If set, this
+      operation is in the process of undoing itself (which is guaranteed to
+      succeed) and cannot be cancelled again.
+    name: Name of the database being created and restored to.
+    optimizeDatabaseOperationName: If exists, the name of the long-running
+      operation that will be used to track the post-restore optimization
+      process to optimize the performance of the restored database, and remove
+      the dependency on the restore source. The name is of the form `projects/
+      <project>/instances/<instance>/databases/<database>/operations/<operatio
+      n> where the <database> is the name of database being created and
+      restored to. The metadata type of the  long-running operation is
+      OptimizeRestoreDatabaseMetadata. This long-running operation will be
+      automatically created by the system after the RestoreDatabase long-
+      running operation completes successfully. This operation will not be
+      created if the restore was not successful.
+    progress: The progress of the RestoreDatabase operation.
+    sourceType: The type of the restore source.
+  """
+
+  class SourceTypeValueValuesEnum(_messages.Enum):
+    r"""The type of the restore source.
+
+    Values:
+      TYPE_UNSPECIFIED: No restore associated.
+      BACKUP: A backup was used as the source of the restore.
+    """
+    TYPE_UNSPECIFIED = 0
+    BACKUP = 1
+
+  backupInfo = _messages.MessageField('BackupInfo', 1)
+  cancelTime = _messages.StringField(2)
+  name = _messages.StringField(3)
+  optimizeDatabaseOperationName = _messages.StringField(4)
+  progress = _messages.MessageField('OperationProgress', 5)
+  sourceType = _messages.EnumField('SourceTypeValueValuesEnum', 6)
+
+
 class RestoreDatabaseRequest(_messages.Message):
   r"""A RestoreDatabaseRequest object.
 
@@ -2453,16 +2542,20 @@ class SpannerProjectsInstancesBackupOperationsListRequest(_messages.Message):
       progress, else true.   * `metadata.type_url` (using filter string
       `metadata.@type`) and fields      in `metadata.value` (using filter
       string `metadata.<field_name>`,      where <field_name> is a field in
-      metadata.value) are  eligible for      filtering.  To filter on multiple
-      expressions, provide each separate expression within parentheses. By
-      default, each expression is an AND expression. However, you can include
-      AND, OR, and NOT expressions explicitly.  Some examples of using filters
-      are:    * `done:true` --> The operation is complete.   *
-      `metadata.database:prod`          --> The database the backup was taken
-      from has a name containing              the string "prod".   * `(metadat
-      a.@type:type.googleapis.com/google.spanner.admin.database.v1.CreateBacku
-      pMetadata)      AND (metadata.name:howl)      AND
-      (metadata.progress.start_time < \"2018-03-28T14:50:00Z\")      AND
+      metadata.value) are eligible for      filtering.   * `error` --> Error
+      associated with the long-running operation.   * `response.type_url`
+      (using filter string `response.@type`) and fields      in
+      `response.value` (using filter string `response.<field_name>`,
+      where <field_name> is a field in response.value) are eligible for
+      filtering.  To filter on multiple expressions, provide each separate
+      expression within parentheses. By default, each expression is an AND
+      expression. However, you can include AND, OR, and NOT expressions
+      explicitly.  Some examples of using filters are:    * `done:true` -->
+      The operation is complete.   * `metadata.database:prod`          --> The
+      database the backup was taken from has a name containing
+      the string "prod".   * `(metadata.@type:type.googleapis.com/google.spann
+      er.admin.database.v1.CreateBackupMetadata)      AND (metadata.name:howl)
+      AND (metadata.progress.start_time < \"2018-03-28T14:50:00Z\")      AND
       (error:*)`          --> Return CreateBackup operations where the created
       backup name              contains the string "howl", the
       progress.start_time of the              backup operation is before
@@ -2486,8 +2579,10 @@ class SpannerProjectsInstancesBackupsCreateRequest(_messages.Message):
   r"""A SpannerProjectsInstancesBackupsCreateRequest object.
 
   Fields:
-    createBackupRequest: A CreateBackupRequest resource to be passed as the
-      request body.
+    backup: A Backup resource to be passed as the request body.
+    backupId: Required. The id of the backup to be created. The `backup_id`
+      appended to `parent` forms the full backup name of the form
+      `projects/<project>/instances/<instance>/backups/<backup_id>`.
     parent: Required. The name of the instance in which the backup will be
       created. This must be the same instance that contains the database the
       backup will be created from. The backup will be stored in the
@@ -2495,8 +2590,9 @@ class SpannerProjectsInstancesBackupsCreateRequest(_messages.Message):
       Values are of the form `projects/<project>/instances/<instance>`.
   """
 
-  createBackupRequest = _messages.MessageField('CreateBackupRequest', 1)
-  parent = _messages.StringField(2, required=True)
+  backup = _messages.MessageField('Backup', 1)
+  backupId = _messages.StringField(2)
+  parent = _messages.StringField(3, required=True)
 
 
 class SpannerProjectsInstancesBackupsDeleteRequest(_messages.Message):
@@ -2565,17 +2661,6 @@ class SpannerProjectsInstancesBackupsListRequest(_messages.Message):
       \"2018-03-28T14:50:00Z\"`          --> The backup `expire_time` is
       before 2018-03-28T14:50:00Z.   * `size_bytes > 10000000000` --> The
       backup's size is greater than 10GB
-    orderBy: An expression for specifying the sort order of the results of the
-      request. The string value should follow SQL syntax: comma separated list
-      of fields in Backup. Fields supported are:    * name    * database    *
-      expire_time    * create_time    * size_bytes    * state  For example,
-      "create_time,name". The default sorting order is ascending. To specify
-      descending order for a field, a suffix " desc" should be appended to the
-      field name. For example, "create_time desc,name". Redundant space
-      characters in the syntax are insigificant. "create_time desc, name" and
-      " create_time desc , name" are equivalent.  If order_by is empty,
-      results will be sorted by `create_time` in descending order starting
-      from the most recently created backup.
     pageSize: Number of backups to be returned in the response. If 0 or less,
       defaults to the server's maximum allowed page size.
     pageToken: If non-empty, `page_token` should contain a next_page_token
@@ -2586,16 +2671,16 @@ class SpannerProjectsInstancesBackupsListRequest(_messages.Message):
   """
 
   filter = _messages.StringField(1)
-  orderBy = _messages.StringField(2)
-  pageSize = _messages.IntegerField(3, variant=_messages.Variant.INT32)
-  pageToken = _messages.StringField(4)
-  parent = _messages.StringField(5, required=True)
+  pageSize = _messages.IntegerField(2, variant=_messages.Variant.INT32)
+  pageToken = _messages.StringField(3)
+  parent = _messages.StringField(4, required=True)
 
 
 class SpannerProjectsInstancesBackupsPatchRequest(_messages.Message):
   r"""A SpannerProjectsInstancesBackupsPatchRequest object.
 
   Fields:
+    backup: A Backup resource to be passed as the request body.
     name: Output only. A globally unique identifier for the backup which
       cannot be changed. Values are of the form
       `projects/<project>/instances/<instance>/backups/a-z*[a-z0-9]` The final
@@ -2604,12 +2689,16 @@ class SpannerProjectsInstancesBackupsPatchRequest(_messages.Message):
       configuration of the instance containing the backup, identified by the
       prefix of the backup name of the form
       `projects/<project>/instances/<instance>`.
-    updateBackupRequest: A UpdateBackupRequest resource to be passed as the
-      request body.
+    updateMask: Required. A mask specifying which fields (e.g. `expire_time`)
+      in the Backup resource should be updated. This mask is relative to the
+      Backup resource, not to the request message. The field mask must always
+      be specified; this prevents any future fields from being erased
+      accidentally by clients that do not know about them.
   """
 
-  name = _messages.StringField(1, required=True)
-  updateBackupRequest = _messages.MessageField('UpdateBackupRequest', 2)
+  backup = _messages.MessageField('Backup', 1)
+  name = _messages.StringField(2, required=True)
+  updateMask = _messages.StringField(3)
 
 
 class SpannerProjectsInstancesBackupsSetIamPolicyRequest(_messages.Message):
@@ -2678,13 +2767,18 @@ class SpannerProjectsInstancesDatabaseOperationsListRequest(_messages.Message):
       progress, else true.   * `metadata.type_url` (using filter string
       `metadata.@type`) and fields      in `metadata.value` (using filter
       string `metadata.<field_name>`,      where <field_name> is a field in
-      metadata.value) are  eligible for      filtering.  To filter on multiple
-      expressions, provide each separate expression within parentheses. By
-      default, each expression is an AND expression. However, you can include
-      AND, OR, and NOT expressions explicitly.  Some examples of using filters
-      are:    * `done:true` --> The operation is complete.   * `(metadata.@typ
-      e:type.googleapis.com/google.spanner.admin.database.v1.RestoreDatabaseMe
-      tadata)      AND (metadata.source_type:BACKUP)      AND
+      metadata.value) are eligible for      filtering.   * `error` --> Error
+      associated with the long-running operation.   * `response.type_url`
+      (using filter string `response.@type`) and fields      in
+      `response.value` (using filter string `response.<field_name>`,
+      where <field_name> is a field in response.value) are eligible for
+      filtering.  To filter on multiple expressions, provide each separate
+      expression within parentheses. By default, each expression is an AND
+      expression. However, you can include AND, OR, and NOT expressions
+      explicitly.  Some examples of using filters are:    * `done:true` -->
+      The operation is complete.   * `(metadata.@type:type.googleapis.com/goog
+      le.spanner.admin.database.v1.RestoreDatabaseMetadata)      AND
+      (metadata.source_type:BACKUP)      AND
       (metadata.backup_info.backup:backup_howl)      AND
       (metadata.name:restored_howl)      AND (metadata.progress.start_time <
       \"2018-03-28T14:50:00Z\")      AND (error:*)`          --> Return
@@ -2848,6 +2942,19 @@ class SpannerProjectsInstancesDatabasesRestoreRequest(_messages.Message):
 
   parent = _messages.StringField(1, required=True)
   restoreDatabaseRequest = _messages.MessageField('RestoreDatabaseRequest', 2)
+
+
+class SpannerProjectsInstancesDatabasesSessionsBatchCreateRequest(_messages.Message):
+  r"""A SpannerProjectsInstancesDatabasesSessionsBatchCreateRequest object.
+
+  Fields:
+    batchCreateSessionsRequest: A BatchCreateSessionsRequest resource to be
+      passed as the request body.
+    database: Required. The database in which the new sessions are created.
+  """
+
+  batchCreateSessionsRequest = _messages.MessageField('BatchCreateSessionsRequest', 1)
+  database = _messages.StringField(2, required=True)
 
 
 class SpannerProjectsInstancesDatabasesSessionsBeginTransactionRequest(_messages.Message):
@@ -3207,7 +3314,7 @@ class SpannerProjectsInstancesPatchRequest(_messages.Message):
     name: Required. A unique identifier for the instance, which cannot be
       changed after the instance is created. Values are of the form
       `projects/<project>/instances/a-z*[a-z0-9]`. The final segment of the
-      name must be between 6 and 30 characters in length.
+      name must be between 2 and 64 characters in length.
     updateInstanceRequest: A UpdateInstanceRequest resource to be passed as
       the request body.
   """
@@ -3812,25 +3919,6 @@ class Type(_messages.Message):
   arrayElementType = _messages.MessageField('Type', 1)
   code = _messages.EnumField('CodeValueValuesEnum', 2)
   structType = _messages.MessageField('StructType', 3)
-
-
-class UpdateBackupRequest(_messages.Message):
-  r"""A UpdateBackupRequest object.
-
-  Fields:
-    backup: Required. The backup to update. `backup.name`, and the fields to
-      be updated as specified by `update_mask` are required. Other fields are
-      ignored. Update is only supported for the following fields:  *
-      `backup.expire_time`.
-    updateMask: Required. A mask specifying which fields (e.g.
-      `backup.expire_time`) in the Backup resource should be updated. This
-      mask is relative to the Backup resource, not to the request message. The
-      field mask must always be specified; this prevents any future fields
-      from being erased accidentally by clients that do not know about them.
-  """
-
-  backup = _messages.MessageField('Backup', 1)
-  updateMask = _messages.StringField(2)
 
 
 class UpdateDatabaseDdlMetadata(_messages.Message):

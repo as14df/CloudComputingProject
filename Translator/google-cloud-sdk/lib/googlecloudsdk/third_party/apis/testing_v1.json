@@ -189,6 +189,7 @@
             "The input test APK could not be parsed.",
             "The AndroidManifest.xml could not be found.",
             "The APK manifest does not declare a package name.",
+            "The APK application ID (aka package name) is invalid.\nSee also\nhttps:\/\/developer.android.com\/studio\/build\/application-id",
             "The test package and app package are the same.",
             "The test apk does not declare an instrumentation.",
             "The input app apk does not have a signature.",
@@ -197,6 +198,8 @@
             "A main launcher activity could not be found.",
             "The app declares one or more permissions that are not allowed.",
             "There is a conflict in the provided robo_directives.",
+            "There is at least one invalid resource name in the provided\nrobo directives",
+            "Invalid definition of action in the robo directives\n(e.g. a click or ignore action includes an input text field)",
             "There there is no test loop intent filter, or the one that is given is\nnot formatted correctly.",
             "The request contains a scenario label that was not declared in the\nmanifest.",
             "There was an error when parsing a label's value.",
@@ -222,6 +225,7 @@
             "MALFORMED_TEST_APK",
             "NO_MANIFEST",
             "NO_PACKAGE_NAME",
+            "INVALID_PACKAGE_NAME",
             "TEST_SAME_AS_APP",
             "NO_INSTRUMENTATION",
             "NO_SIGNATURE",
@@ -230,6 +234,8 @@
             "NO_LAUNCHER_ACTIVITY",
             "FORBIDDEN_PERMISSIONS",
             "INVALID_ROBO_DIRECTIVES",
+            "INVALID_RESOURCE_NAME",
+            "INVALID_DIRECTIVE_ACTION",
             "TEST_LOOP_INTENT_FILTER_NOT_FOUND",
             "SCENARIO_LABEL_NOT_DECLARED",
             "SCENARIO_LABEL_MALFORMED",
@@ -321,10 +327,6 @@
         "iosXcTest": {
           "description": "An iOS XCTest, via an .xctestrun file.",
           "$ref": "IosXcTest"
-        },
-        "autoGoogleLogin": {
-          "description": "Enables automatic Google account login.\nIf set, the service will automatically generate a Google test account and\nadd it to the device, before executing the test. Note that test accounts\nmight be reused.\nMany applications show their full set of functionalities when an account is\npresent on the device. Logging into the device with these generated\naccounts allows testing more functionalities.\nDefault is false.",
-          "type": "boolean"
         },
         "disableVideoRecording": {
           "description": "Disables video recording; may reduce test latency.",
@@ -626,13 +628,15 @@
           "enumDescriptions": [
             "DO NOT USE. For proto versioning only.",
             "Direct Robo to click on the specified element. No-op if specified element\nis not clickable.",
-            "Direct Robo to enter text on the specified element. No-op if specified\nelement is not enabled or does not allow text entry."
+            "Direct Robo to enter text on the specified element. No-op if specified\nelement is not enabled or does not allow text entry.",
+            "Direct Robo to ignore interactions with a specific element."
           ],
           "type": "string",
           "enum": [
             "ACTION_TYPE_UNSPECIFIED",
             "SINGLE_CLICK",
-            "ENTER_TEXT"
+            "ENTER_TEXT",
+            "IGNORE"
           ]
         }
       }
@@ -647,6 +651,11 @@
         },
         "startActivity": {
           "$ref": "StartActivityIntent"
+        },
+        "timeout": {
+          "description": "Timeout in seconds for each intent.",
+          "type": "string",
+          "format": "google-duration"
         }
       }
     },
@@ -727,7 +736,7 @@
           "$ref": "FileReference"
         },
         "xcodeVersion": {
-          "description": "The Xcode version that should be used for the test.\nUse the EnvironmentDiscoveryService to get supported options.\nDefaults to the latest Xcode version Firebase Test Lab supports.",
+          "description": "The Xcode version that should be used for the test.\nUse the TestEnvironmentDiscoveryService to get supported options.\nDefaults to the latest Xcode version Firebase Test Lab supports.",
           "type": "string"
         },
         "appBundleId": {
@@ -761,28 +770,28 @@
       "type": "object",
       "properties": {
         "androidModelIds": {
-          "description": "Required. The ids of the set of Android device to be used.\nUse the EnvironmentDiscoveryService to get supported options.",
+          "description": "Required. The ids of the set of Android device to be used.\nUse the TestEnvironmentDiscoveryService to get supported options.",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "androidVersionIds": {
-          "description": "Required. The ids of the set of Android OS version to be used.\nUse the EnvironmentDiscoveryService to get supported options.",
+          "description": "Required. The ids of the set of Android OS version to be used.\nUse the TestEnvironmentDiscoveryService to get supported options.",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "locales": {
-          "description": "Required. The set of locales the test device will enable for testing.\nUse the EnvironmentDiscoveryService to get supported options.",
+          "description": "Required. The set of locales the test device will enable for testing.\nUse the TestEnvironmentDiscoveryService to get supported options.",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "orientations": {
-          "description": "Required. The set of orientations to test with.\nUse the EnvironmentDiscoveryService to get supported options.",
+          "description": "Required. The set of orientations to test with.\nUse the TestEnvironmentDiscoveryService to get supported options.",
           "type": "array",
           "items": {
             "type": "string"
@@ -810,19 +819,19 @@
       "type": "object",
       "properties": {
         "androidModelId": {
-          "description": "Required. The id of the Android device to be used.\nUse the EnvironmentDiscoveryService to get supported options.",
+          "description": "Required. The id of the Android device to be used.\nUse the TestEnvironmentDiscoveryService to get supported options.",
           "type": "string"
         },
         "androidVersionId": {
-          "description": "Required. The id of the Android OS version to be used.\nUse the EnvironmentDiscoveryService to get supported options.",
+          "description": "Required. The id of the Android OS version to be used.\nUse the TestEnvironmentDiscoveryService to get supported options.",
           "type": "string"
         },
         "locale": {
-          "description": "Required. The locale the test device used for testing.\nUse the EnvironmentDiscoveryService to get supported options.",
+          "description": "Required. The locale the test device used for testing.\nUse the TestEnvironmentDiscoveryService to get supported options.",
           "type": "string"
         },
         "orientation": {
-          "description": "Required. How the device is oriented during the test.\nUse the EnvironmentDiscoveryService to get supported options.",
+          "description": "Required. How the device is oriented during the test.\nUse the TestEnvironmentDiscoveryService to get supported options.",
           "type": "string"
         }
       }
@@ -847,19 +856,19 @@
       "type": "object",
       "properties": {
         "iosModelId": {
-          "description": "Required. The id of the iOS device to be used.\nUse the EnvironmentDiscoveryService to get supported options.",
+          "description": "Required. The id of the iOS device to be used.\nUse the TestEnvironmentDiscoveryService to get supported options.",
           "type": "string"
         },
         "iosVersionId": {
-          "description": "Required. The id of the iOS major software version to be used.\nUse the EnvironmentDiscoveryService to get supported options.",
+          "description": "Required. The id of the iOS major software version to be used.\nUse the TestEnvironmentDiscoveryService to get supported options.",
           "type": "string"
         },
         "locale": {
-          "description": "Required. The locale the test device used for testing.\nUse the EnvironmentDiscoveryService to get supported options.",
+          "description": "Required. The locale the test device used for testing.\nUse the TestEnvironmentDiscoveryService to get supported options.",
           "type": "string"
         },
         "orientation": {
-          "description": "Required. How the device is oriented during the test.\nUse the EnvironmentDiscoveryService to get supported options.",
+          "description": "Required. How the device is oriented during the test.\nUse the TestEnvironmentDiscoveryService to get supported options.",
           "type": "string"
         }
       }

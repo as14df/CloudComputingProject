@@ -378,7 +378,8 @@ to completion."""
 
     if not args.async:
       adapter.WaitForOperation(op_ref,
-                               'Updating {0}'.format(cluster_ref.clusterId))
+                               'Updating {0}'.format(cluster_ref.clusterId),
+                               timeout_s=1800)
 
       log.UpdatedResource(cluster_ref)
       cluster_url = util.GenerateClusterUrl(cluster_ref)
@@ -429,6 +430,7 @@ class UpdateBeta(Update):
     flags.AddVerticalPodAutoscalingFlag(group)
     flags.AddResourceUsageExportFlags(group, add_clear_flag=True)
     flags.AddIstioConfigFlag(parser)
+    flags.AddEnableIntraNodeVisibilityFlag(group)
 
   def ParseUpdateOptions(self, args, locations):
     opts = container_command_util.ParseUpdateOptionsBase(args, locations)
@@ -445,6 +447,7 @@ class UpdateBeta(Update):
     opts.enable_vertical_pod_autoscaling = args.enable_vertical_pod_autoscaling
     opts.istio_config = args.istio_config
     opts.resource_usage_bigquery_dataset = args.resource_usage_bigquery_dataset
+    opts.enable_intra_node_visibility = args.enable_intra_node_visibility
     opts.clear_resource_usage_bigquery_dataset = \
         args.clear_resource_usage_bigquery_dataset
     opts.enable_network_egress_metering = args.enable_network_egress_metering
@@ -482,6 +485,7 @@ class UpdateAlpha(Update):
     flags.AddRemoveLabelsFlag(group)
     flags.AddNetworkPolicyFlags(group)
     flags.AddAutoprovisioningFlags(group, hidden=False)
+    flags.AddAutoscalingProfilesFlag(group, hidden=True)
     flags.AddMaintenanceWindowFlag(group, add_unset_text=True)
     flags.AddPodSecurityPolicyFlag(group)
     flags.AddEnableBinAuthzFlag(group)
@@ -489,6 +493,8 @@ class UpdateAlpha(Update):
     flags.AddVerticalPodAutoscalingFlag(group)
     flags.AddSecurityProfileForUpdateFlag(group)
     flags.AddIstioConfigFlag(parser)
+    flags.AddEnableIntraNodeVisibilityFlag(group)
+    flags.AddPeeringRouteSharingFlag(group)
 
   def ParseUpdateOptions(self, args, locations):
     opts = container_command_util.ParseUpdateOptionsBase(args, locations)
@@ -500,6 +506,7 @@ class UpdateAlpha(Update):
     opts.max_memory = args.max_memory
     opts.min_accelerator = args.min_accelerator
     opts.max_accelerator = args.max_accelerator
+    opts.autoscaling_profile = args.autoscaling_profile
     opts.enable_pod_security_policy = args.enable_pod_security_policy
     opts.enable_binauthz = args.enable_binauthz
     opts.resource_usage_bigquery_dataset = args.resource_usage_bigquery_dataset
@@ -508,7 +515,9 @@ class UpdateAlpha(Update):
     opts.enable_vertical_pod_autoscaling = args.enable_vertical_pod_autoscaling
     opts.security_profile = args.security_profile
     opts.istio_config = args.istio_config
+    opts.enable_intra_node_visibility = args.enable_intra_node_visibility
     opts.enable_network_egress_metering = args.enable_network_egress_metering
     flags.ValidateIstioConfigUpdateArgs(args.istio_config, args.disable_addons)
+    opts.enable_peering_route_sharing = args.enable_peering_route_sharing
 
     return opts

@@ -3,10 +3,10 @@
   "discoveryVersion": "v1",
   "id": "gkehub:v1beta1",
   "name": "gkehub",
-  "canonicalName": "GKE Hub API",
+  "canonicalName": "GKE Hub",
   "version": "v1beta1",
   "revision": "0",
-  "title": "GKE Hub API",
+  "title": "GKE Hub",
   "description": "",
   "ownerDomain": "google.com",
   "ownerName": "Google",
@@ -14,7 +14,7 @@
     "x16": "http://www.google.com/images/icons/product/search-16.gif",
     "x32": "http://www.google.com/images/icons/product/search-32.gif"
    },
-  "documentationLink": "https://cloud.google.com/",
+  "documentationLink": "https://cloud.google.com/gke-on-prem/docs/latest/how-to/connect/registering-a-user-cluster",
   "protocol": "rest",
   "rootUrl": "https://gkehub.googleapis.com/",
   "servicePath": "",
@@ -164,7 +164,7 @@
     },
     "GoogleRpcStatus": {
       "id": "GoogleRpcStatus",
-      "description": "The `Status` type defines a logical error model that is suitable for different\nprogramming environments, including REST APIs and RPC APIs. It is used by\n[gRPC](https:\/\/github.com\/grpc). The error model is designed to be:\n\n- Simple to use and understand for most users\n- Flexible enough to meet unexpected needs\n\n# Overview\n\nThe `Status` message contains three pieces of data: error code, error message,\nand error details. The error code should be an enum value of\ngoogle.rpc.Code, but it may accept additional error codes if needed.  The\nerror message should be a developer-facing English message that helps\ndevelopers *understand* and *resolve* the error. If a localized user-facing\nerror message is needed, put the localized message in the error details or\nlocalize it in the client. The optional error details may contain arbitrary\ninformation about the error. There is a predefined set of error detail types\nin the package `google.rpc` that can be used for common error conditions.\n\n# Language mapping\n\nThe `Status` message is the logical representation of the error model, but it\nis not necessarily the actual wire format. When the `Status` message is\nexposed in different client libraries and different wire protocols, it can be\nmapped differently. For example, it will likely be mapped to some exceptions\nin Java, but more likely mapped to some error codes in C.\n\n# Other uses\n\nThe error model and the `Status` message can be used in a variety of\nenvironments, either with or without APIs, to provide a\nconsistent developer experience across different environments.\n\nExample uses of this error model include:\n\n- Partial errors. If a service needs to return partial errors to the client,\n    it may embed the `Status` in the normal response to indicate the partial\n    errors.\n\n- Workflow errors. A typical workflow has multiple steps. Each step may\n    have a `Status` message for error reporting.\n\n- Batch operations. If a client uses batch request and batch response, the\n    `Status` message should be used directly inside batch response, one for\n    each error sub-response.\n\n- Asynchronous operations. If an API call embeds asynchronous operation\n    results in its response, the status of those operations should be\n    represented directly using the `Status` message.\n\n- Logging. If some API errors are stored in logs, the message `Status` could\n    be used directly after any stripping needed for security\/privacy reasons.",
+      "description": "The `Status` type defines a logical error model that is suitable for\ndifferent programming environments, including REST APIs and RPC APIs. It is\nused by [gRPC](https:\/\/github.com\/grpc). The error model is designed to be:\n\n- Simple to use and understand for most users\n- Flexible enough to meet unexpected needs\n\n# Overview\n\nThe `Status` message contains three pieces of data: error code, error\nmessage, and error details. The error code should be an enum value of\ngoogle.rpc.Code, but it may accept additional error codes if needed.  The\nerror message should be a developer-facing English message that helps\ndevelopers *understand* and *resolve* the error. If a localized user-facing\nerror message is needed, put the localized message in the error details or\nlocalize it in the client. The optional error details may contain arbitrary\ninformation about the error. There is a predefined set of error detail types\nin the package `google.rpc` that can be used for common error conditions.\n\n# Language mapping\n\nThe `Status` message is the logical representation of the error model, but it\nis not necessarily the actual wire format. When the `Status` message is\nexposed in different client libraries and different wire protocols, it can be\nmapped differently. For example, it will likely be mapped to some exceptions\nin Java, but more likely mapped to some error codes in C.\n\n# Other uses\n\nThe error model and the `Status` message can be used in a variety of\nenvironments, either with or without APIs, to provide a\nconsistent developer experience across different environments.\n\nExample uses of this error model include:\n\n- Partial errors. If a service needs to return partial errors to the client,\n    it may embed the `Status` in the normal response to indicate the partial\n    errors.\n\n- Workflow errors. A typical workflow has multiple steps. Each step may\n    have a `Status` message for error reporting.\n\n- Batch operations. If a client uses batch request and batch response, the\n    `Status` message should be used directly inside batch response, one for\n    each error sub-response.\n\n- Asynchronous operations. If an API call embeds asynchronous operation\n    results in its response, the status of those operations should be\n    represented directly using the `Status` message.\n\n- Logging. If some API errors are stored in logs, the message `Status` could\n    be used directly after any stripping needed for security\/privacy reasons.",
       "type": "object",
       "properties": {
         "code": {
@@ -205,7 +205,7 @@
     },
     "ListMembershipsResponse": {
       "id": "ListMembershipsResponse",
-      "description": "Response message for the `MembershipService.ListMemberships` method.",
+      "description": "Response message for the `GkeHubMembershipService.ListMemberships` method.",
       "type": "object",
       "properties": {
         "resources": {
@@ -238,16 +238,15 @@
           }
         },
         "description": {
-          "description": "An optional description of this membership, limited to 2048 characters.",
+          "description": "A required description of this membership, limited to 63 characters.",
           "type": "string"
         },
         "endpoint": {
-          "description": "Endpoint information to reach this member.",
           "$ref": "MembershipEndpoint"
         },
-        "status": {
-          "description": "Output only. Status of the Membership resource.",
-          "$ref": "MembershipStatus"
+        "state": {
+          "description": "Output only. State of the Membership resource.",
+          "$ref": "MembershipState"
         },
         "createTime": {
           "description": "Output only. Timestamp for when the Membership was created.",
@@ -271,12 +270,8 @@
       "description": "MembershipEndpoint contains the information to reach a member.",
       "type": "object",
       "properties": {
-        "selfLink": {
-          "description": "If this API server is also a Google service provide its OnePlatform 'name'.\nFor example, the FQDN to a GKE Cluster that backs this Membership:\nhttps:\/\/container.googleapis.com\/v1\/projects\/x\/zones\/us-west1-a\/clusters\/c0\nIt can be at the most 1000 characters in length.",
-          "type": "string"
-        },
-        "resourceId": {
-          "description": "Unique per-project identification for this endpoint (in space and time) to\nbe provided by the user at creation time. While a self_link is optional for\nendpoints that may not be on GCP, all membership endpoints must provide a\nunique resource_id string. It is not mutable after creation. See\ngo\/membership-uid for more details.\nIt can be at the most 1000 characters in length.",
+        "gcpResourceLink": {
+          "description": "If this API server is also a Google service provide the self link of its\nGCP resource.\nFor example, the FQDN to a GKE Cluster that backs this Membership:\nhttps:\/\/container.googleapis.com\/v1\/projects\/x\/zones\/us-west1-a\/clusters\/c0\nIt can be at the most 1000 characters in length.",
           "type": "string"
         },
         "oidcConfig": {
@@ -331,16 +326,30 @@
           "items": {
             "type": "string"
           }
+        },
+        "scopes": {
+          "description": "Scopes to be requested from Identity Provider",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "extraParameters": {
+          "description": "Additional parameters required by the Identity Provider",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       }
     },
-    "MembershipStatus": {
-      "id": "MembershipStatus",
-      "description": "Status of the Membership resource.",
+    "MembershipState": {
+      "id": "MembershipState",
+      "description": "State of the Membership resource.",
       "type": "object",
       "properties": {
         "code": {
-          "description": "Code indicating the status of the Membership resource.",
+          "description": "Code indicating the state of the Membership resource.",
           "enumDescriptions": [
             "Not set.",
             "CREATING indicates the cluster is being registered.",
@@ -361,16 +370,8 @@
           "description": "Human readable description of the issue.",
           "type": "string"
         },
-        "details": {
-          "description": "Structured information about the problem.",
-          "type": "object",
-          "additionalProperties": {
-            "type": "any",
-            "description": "Properties of the object. Contains field @type with type URL."
-          }
-        },
         "updateTime": {
-          "description": "The last update time of this status by the controllers",
+          "description": "The last update time of this state by the controllers",
           "type": "string",
           "format": "google-datetime"
         }
@@ -655,7 +656,7 @@
                           "type": "string"
                         },
                         "filter": {
-                          "description": "Lists the Memberships that match the filter expression. A filter expression\nfilters the resources listed in the response. The expression must be of\nthe form `<field> <operator> <value>` where operators: `<`, `>`, `<=`,\n`>=`,\n`!=`, `=`, `:` are supported (colon `:` represents a HAS operator which is\nroughly synonymous with equality). <field> can refer to a proto or JSON\nfield, or a synthetic field. Field names can be camelCase or snake_case.\n\nExamples:\n- Filter by name:\n  name = \"projects\/foo-proj\/locations\/global\/membership\/bar\n\n- Filter by labels:\n  - Resources that have a key called `foo`\n    labels.foo:*\n  - Resources that have a key called `foo` whose value is `bar`\n    labels.foo = bar\n\n - Filter by status:\n   - Members in CREATING status.\n     status = CREATING",
+                          "description": "Lists the Memberships that match the filter expression. A filter expression\nfilters the resources listed in the response. The expression must be of\nthe form `<field> <operator> <value>` where operators: `<`, `>`, `<=`,\n`>=`,\n`!=`, `=`, `:` are supported (colon `:` represents a HAS operator which is\nroughly synonymous with equality). <field> can refer to a proto or JSON\nfield, or a synthetic field. Field names can be camelCase or snake_case.\n\nExamples:\n- Filter by name:\n  name = \"projects\/foo-proj\/locations\/global\/membership\/bar\n\n- Filter by labels:\n  - Resources that have a key called `foo`\n    labels.foo:*\n  - Resources that have a key called `foo` whose value is `bar`\n    labels.foo = bar\n\n - Filter by state:\n   - Members in CREATING state.\n     state = CREATING",
                           "location": "query",
                           "type": "string"
                         },
@@ -674,7 +675,7 @@
                       "scopes": [
                         "https://www.googleapis.com/auth/cloud-platform"
                       ],
-                      "description": "Lists Memberships in a given project and location.\nbecause we are hardcoding\n`locations\/global` in to the URL schema."
+                      "description": "Lists Memberships in a given project and location."
                     },
                     "get": {
                       "id": "gkehub.projects.locations.global.memberships.get",
@@ -732,7 +733,7 @@
                       "scopes": [
                         "https://www.googleapis.com/auth/cloud-platform"
                       ],
-                      "description": "Adds a new Membership.\nbecause we are hardcoding\n`locations\/global` in to the URL schema."
+                      "description": "Adds a new Membership."
                     },
                     "delete": {
                       "id": "gkehub.projects.locations.global.memberships.delete",

@@ -151,14 +151,14 @@ class Bucket(_messages.Message):
     r"""The bucket's IAM configuration.
 
     Messages:
-      BucketPolicyOnlyValue: A BucketPolicyOnlyValue object.
+      BucketPolicyOnlyValue: The bucket's Bucket Policy Only configuration.
 
     Fields:
-      bucketPolicyOnly: A BucketPolicyOnlyValue attribute.
+      bucketPolicyOnly: The bucket's Bucket Policy Only configuration.
     """
 
     class BucketPolicyOnlyValue(_messages.Message):
-      r"""A BucketPolicyOnlyValue object.
+      r"""The bucket's Bucket Policy Only configuration.
 
       Fields:
         enabled: If set, access checks only use bucket-level IAM policies or
@@ -608,6 +608,98 @@ class ComposeRequest(_messages.Message):
   sourceObjects = _messages.MessageField('SourceObjectsValueListEntry', 3, repeated=True)
 
 
+class Expr(_messages.Message):
+  r"""Represents an expression text. Example: title: "User account presence"
+  description: "Determines whether the request has a user account" expression:
+  "size(request.user) > 0"
+
+  Fields:
+    description: An optional description of the expression. This is a longer
+      text which describes the expression, e.g. when hovered over it in a UI.
+    expression: Textual representation of an expression in Common Expression
+      Language syntax. The application context of the containing message
+      determines which well-known feature set of CEL is supported.
+    kind: The kind of item this is. For storage, this is always storage#expr.
+      This field is ignored on input.
+    location: An optional string indicating the location of the expression for
+      error reporting, e.g. a file name and a position in the file.
+    title: An optional title for the expression, i.e. a short string
+      describing its purpose. This can be used e.g. in UIs which allow to
+      enter the expression.
+  """
+
+  description = _messages.StringField(1)
+  expression = _messages.StringField(2)
+  kind = _messages.StringField(3, default=u'storage#expr')
+  location = _messages.StringField(4)
+  title = _messages.StringField(5)
+
+
+class HmacKey(_messages.Message):
+  r"""JSON template to produce a JSON-style HMAC Key resource for Create
+  responses.
+
+  Fields:
+    kind: The kind of item this is. For HMAC keys, this is always
+      storage#hmacKey.
+    metadata: Key metadata.
+    secret: HMAC secret key material.
+  """
+
+  kind = _messages.StringField(1, default=u'storage#hmacKey')
+  metadata = _messages.MessageField('extra_types.JsonValue', 2)
+  secret = _messages.StringField(3)
+
+
+class HmacKeyMetadata(_messages.Message):
+  r"""JSON template to produce a JSON-style HMAC Key metadata resource.
+
+  Fields:
+    accessId: The ID of the HMAC Key.
+    etag: HTTP 1.1 Entity tag for the access-control entry.
+    id: The ID of the HMAC key, including the Project ID and the Access ID.
+    kind: The kind of item this is. For HMAC Key metadata, this is always
+      storage#hmacKeyMetadata.
+    projectId: Project ID owning the service account to which the key
+      authenticates.
+    selfLink: The link to this resource.
+    serviceAccountEmail: The email address of the key's associated service
+      account.
+    state: The state of the key. Can be one of ACTIVE, INACTIVE, or DELETED.
+    timeCreated: The creation time of the HMAC key in RFC 3339 format.
+    updated: The last modification time of the HMAC key metadata in RFC 3339
+      format.
+  """
+
+  accessId = _messages.StringField(1)
+  etag = _messages.StringField(2)
+  id = _messages.StringField(3)
+  kind = _messages.StringField(4, default=u'storage#hmacKeyMetadata')
+  projectId = _messages.StringField(5)
+  selfLink = _messages.StringField(6)
+  serviceAccountEmail = _messages.StringField(7)
+  state = _messages.StringField(8)
+  timeCreated = _messages.StringField(9)
+  updated = _messages.StringField(10)
+
+
+class HmacKeysMetadata(_messages.Message):
+  r"""A list of hmacKeys.
+
+  Fields:
+    items: The list of items.
+    kind: The kind of item this is. For lists of hmacKeys, this is always
+      storage#hmacKeysMetadata.
+    nextPageToken: The continuation token, used to page through large result
+      sets. Provide this value in a subsequent request to return the next page
+      of results.
+  """
+
+  items = _messages.MessageField('HmacKeyMetadata', 1, repeated=True)
+  kind = _messages.StringField(2, default=u'storage#hmacKeysMetadata')
+  nextPageToken = _messages.StringField(3)
+
+
 class Notification(_messages.Message):
   r"""A subscription to receive Google PubSub notifications.
 
@@ -964,7 +1056,10 @@ class Policy(_messages.Message):
     r"""A BindingsValueListEntry object.
 
     Fields:
-      condition: A extra_types.JsonValue attribute.
+      condition: The condition that is associated with this binding. NOTE: an
+        unsatisfied condition will not allow user access via current binding.
+        Different bindings, including their conditions, are examined
+        independently.
       members: A collection of identifiers for members who may assume the
         provided role. Recognized identifiers are as follows:   - allUsers - A
         special identifier that represents anyone on the internet; with or
@@ -1008,7 +1103,7 @@ class Policy(_messages.Message):
         entry on a bucket with the OWNER role.
     """
 
-    condition = _messages.MessageField('extra_types.JsonValue', 1)
+    condition = _messages.MessageField('Expr', 1)
     members = _messages.StringField(2, repeated=True)
     role = _messages.StringField(3)
 
@@ -2752,6 +2847,69 @@ class StorageObjectsWatchAllRequest(_messages.Message):
   projection = _messages.EnumField('ProjectionValueValuesEnum', 8)
   userProject = _messages.StringField(9)
   versions = _messages.BooleanField(10)
+
+
+class StorageProjectsHmacKeysCreateRequest(_messages.Message):
+  r"""A StorageProjectsHmacKeysCreateRequest object.
+
+  Fields:
+    projectId: Project ID owning the service account.
+    serviceAccountEmail: Email address of the service account.
+  """
+
+  projectId = _messages.StringField(1, required=True)
+  serviceAccountEmail = _messages.StringField(2, required=True)
+
+
+class StorageProjectsHmacKeysDeleteRequest(_messages.Message):
+  r"""A StorageProjectsHmacKeysDeleteRequest object.
+
+  Fields:
+    accessId: Name of the HMAC key to be deleted.
+    projectId: Project ID owning the requested key
+  """
+
+  accessId = _messages.StringField(1, required=True)
+  projectId = _messages.StringField(2, required=True)
+
+
+class StorageProjectsHmacKeysDeleteResponse(_messages.Message):
+  r"""An empty StorageProjectsHmacKeysDelete response."""
+
+
+class StorageProjectsHmacKeysGetRequest(_messages.Message):
+  r"""A StorageProjectsHmacKeysGetRequest object.
+
+  Fields:
+    accessId: Name of the HMAC key.
+    projectId: Project ID owning the service account of the requested key.
+  """
+
+  accessId = _messages.StringField(1, required=True)
+  projectId = _messages.StringField(2, required=True)
+
+
+class StorageProjectsHmacKeysListRequest(_messages.Message):
+  r"""A StorageProjectsHmacKeysListRequest object.
+
+  Fields:
+    maxResults: Maximum number of items plus prefixes to return in a single
+      page of responses. Because duplicate prefixes are omitted, fewer total
+      results may be returned than requested. The service uses this parameter
+      or 1,000 items, whichever is smaller.
+    pageToken: A previously-returned page token representing part of the
+      larger set of results to view.
+    projectId: Name of the project in which to look for HMAC keys.
+    serviceAccountEmail: If present, only keys for the given service account
+      are returned.
+    showDeletedKeys: Whether or not to show keys in the DELETED state.
+  """
+
+  maxResults = _messages.IntegerField(1, variant=_messages.Variant.UINT32, default=1000)
+  pageToken = _messages.StringField(2)
+  projectId = _messages.StringField(3, required=True)
+  serviceAccountEmail = _messages.StringField(4)
+  showDeletedKeys = _messages.BooleanField(5)
 
 
 class StorageProjectsServiceAccountGetRequest(_messages.Message):

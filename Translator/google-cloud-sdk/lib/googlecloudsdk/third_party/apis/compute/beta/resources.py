@@ -38,13 +38,6 @@ class Collections(enum.Enum):
       [u'project', u'region', u'address'],
       True
   )
-  ALLOCATIONS = (
-      'allocations',
-      'projects/{project}/zones/{zone}/allocations/{allocation}',
-      {},
-      [u'project', u'zone', u'allocation'],
-      True
-  )
   AUTOSCALERS = (
       'autoscalers',
       'projects/{project}/zones/{zone}/autoscalers/{autoscaler}',
@@ -78,6 +71,13 @@ class Collections(enum.Enum):
       'projects/{project}/zones/{zone}/disks/{disk}',
       {},
       [u'project', u'zone', u'disk'],
+      True
+  )
+  EXTERNALVPNGATEWAYS = (
+      'externalVpnGateways',
+      'projects/{project}/global/externalVpnGateways/{externalVpnGateway}',
+      {},
+      [u'project', u'externalVpnGateway'],
       True
   )
   FIREWALLS = (
@@ -329,6 +329,13 @@ class Collections(enum.Enum):
       [u'project', u'region'],
       True
   )
+  RESERVATIONS = (
+      'reservations',
+      'projects/{project}/zones/{zone}/reservations/{reservation}',
+      {},
+      [u'project', u'zone', u'reservation'],
+      True
+  )
   RESOURCEPOLICIES = (
       'resourcePolicies',
       'projects/{project}/regions/{region}/resourcePolicies/{resourcePolicy}',
@@ -448,6 +455,13 @@ class Collections(enum.Enum):
       'projects/{project}/global/urlMaps/{urlMap}',
       {},
       [u'project', u'urlMap'],
+      True
+  )
+  VPNGATEWAYS = (
+      'vpnGateways',
+      'projects/{project}/regions/{region}/vpnGateways/{vpnGateway}',
+      {},
+      [u'project', u'region', u'vpnGateway'],
       True
   )
   VPNTUNNELS = (

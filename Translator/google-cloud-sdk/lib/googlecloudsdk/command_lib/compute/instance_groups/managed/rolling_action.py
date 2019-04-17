@@ -80,9 +80,17 @@ def CreateRequest(args,
   update_policy = client.messages.InstanceGroupManagerUpdatePolicy(
       maxSurge=max_surge,
       maxUnavailable=max_unavailable,
-      minReadySec=args.min_ready,
       minimalAction=minimal_action,
       type=update_policy_type)
+  # min_ready is available in alpha and beta APIs only
+  if hasattr(args, 'min_ready'):
+    update_policy.minReadySec = args.min_ready
+  # replacement_method is available in alpha API only
+  if hasattr(args, 'replacement_method'):
+    replacement_method = update_instances_utils.ParseReplacementMethod(
+        args.replacement_method, client.messages)
+    update_policy.replacementMethod = replacement_method
+
   igm_resource = client.messages.InstanceGroupManager(
       instanceTemplate=None, updatePolicy=update_policy, versions=versions)
   if igm_ref.Collection() == 'compute.instanceGroupManagers':

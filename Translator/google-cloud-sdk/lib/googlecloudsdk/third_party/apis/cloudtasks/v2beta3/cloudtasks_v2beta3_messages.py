@@ -173,6 +173,8 @@ class AppEngineHttpRequest(_messages.Message):
       HEAD: HTTP HEAD
       PUT: HTTP PUT
       DELETE: HTTP DELETE
+      PATCH: HTTP PATCH
+      OPTIONS: HTTP OPTIONS
     """
     HTTP_METHOD_UNSPECIFIED = 0
     POST = 1
@@ -180,6 +182,8 @@ class AppEngineHttpRequest(_messages.Message):
     HEAD = 3
     PUT = 4
     DELETE = 5
+    PATCH = 6
+    OPTIONS = 7
 
   @encoding.MapUnrecognizedFields('additionalProperties')
   class HeadersValue(_messages.Message):
@@ -315,10 +319,10 @@ class Binding(_messages.Message):
   r"""Associates `members` with a `role`.
 
   Fields:
-    condition: Unimplemented. The condition that is associated with this
-      binding. NOTE: an unsatisfied condition will not allow user access via
-      current binding. Different bindings, including their conditions, are
-      examined independently.
+    condition: The condition that is associated with this binding. NOTE: an
+      unsatisfied condition will not allow user access via current binding.
+      Different bindings, including their conditions, are examined
+      independently.
     members: Specifies the identities requesting access for a Cloud Platform
       resource. `members` can have the following values:  * `allUsers`: A
       special identifier that represents anyone who is    on the internet;
@@ -330,8 +334,8 @@ class Binding(_messages.Message):
       service    account. For example, `my-other-
       app@appspot.gserviceaccount.com`.  * `group:{emailid}`: An email address
       that represents a Google group.    For example, `admins@example.com`.
-      * `domain:{domain}`: A Google Apps domain name that represents all the
-      users of that domain. For example, `google.com` or `example.com`.
+      * `domain:{domain}`: The G Suite domain (primary) that represents all
+      the    users of that domain. For example, `google.com` or `example.com`.
     role: Role that is assigned to `members`. For example, `roles/viewer`,
       `roles/editor`, or `roles/owner`.
   """
@@ -458,7 +462,7 @@ class CloudtasksProjectsLocationsQueuesPatchRequest(_messages.Message):
       format: `projects/PROJECT_ID/locations/LOCATION_ID/queues/QUEUE_ID`  *
       `PROJECT_ID` can contain letters ([A-Za-z]), numbers ([0-9]),    hyphens
       (-), colons (:), or periods (.).    For more information, see
-      [Identifying projects](https://cloud.google.com/resource-manager/docs
+      [Identifying    projects](https://cloud.google.com/resource-manager/docs
       /creating-managing-projects#identifying_projects) * `LOCATION_ID` is the
       canonical ID for the queue's location.    The list of available
       locations can be obtained by calling    ListLocations.    For more
@@ -986,14 +990,14 @@ class Queue(_messages.Message):
       . UpdateQueue cannot be used to change `state`.
 
   Fields:
-    appEngineHttpQueue: AppEngineHttpQueue settings apply only to AppEngine
+    appEngineHttpQueue: AppEngineHttpQueue settings apply only to App Engine
       tasks in this queue.
     name: Caller-specified and required in CreateQueue, after which it becomes
       output only.  The queue name.  The queue name must have the following
       format: `projects/PROJECT_ID/locations/LOCATION_ID/queues/QUEUE_ID`  *
       `PROJECT_ID` can contain letters ([A-Za-z]), numbers ([0-9]),    hyphens
       (-), colons (:), or periods (.).    For more information, see
-      [Identifying projects](https://cloud.google.com/resource-manager/docs
+      [Identifying    projects](https://cloud.google.com/resource-manager/docs
       /creating-managing-projects#identifying_projects) * `LOCATION_ID` is the
       canonical ID for the queue's location.    The list of available
       locations can be obtained by calling    ListLocations.    For more
@@ -1016,18 +1020,18 @@ class Queue(_messages.Message):
       particular a task after its first attempt fails. That is,   retry_config
       controls task retries (the   second attempt, third attempt, etc).  The
       queue's actual dispatch rate is the result of:  * Number of tasks in the
-      queue * User-specified throttling: rate limits   retry configuration,
-      and the   queue's state. * System throttling due to `429` (Too Many
-      Requests) or `503` (Service   Unavailable) responses from the worker,
-      high error rates, or to smooth   sudden large traffic spikes.
+      queue * User-specified throttling: rate_limits,   retry_config, and the
+      queue's state. * System throttling due to `429` (Too Many Requests) or
+      `503` (Service   Unavailable) responses from the worker, high error
+      rates, or to smooth   sudden large traffic spikes.
     retryConfig: Settings that determine the retry behavior.  * For tasks
       created using Cloud Tasks: the queue-level retry settings   apply to all
       tasks in the queue that were created using Cloud Tasks.   Retry settings
       cannot be set on individual tasks. * For tasks created using the App
       Engine SDK: the queue-level retry   settings apply to all tasks in the
       queue which do not have retry settings   explicitly set on the task and
-      were created by the App Engine SDK. See   [App Engine documentation](htt
-      ps://cloud.google.com/appengine/docs/standard/python/taskqueue/push
+      were created by the App Engine SDK. See   [App Engine   documentation](h
+      ttps://cloud.google.com/appengine/docs/standard/python/taskqueue/push
       /retrying-tasks).
     state: Output only. The state of the queue.  `state` can only be changed
       by called PauseQueue, ResumeQueue, or uploading [queue.yaml/xml](https:/
@@ -1401,8 +1405,30 @@ class Task(_messages.Message):
     createTime: Output only. The time that the task was created.
       `create_time` will be truncated to the nearest second.
     dispatchCount: Output only. The number of attempts dispatched.  This count
-      includes tasks which have been dispatched but haven't received a
+      includes attempts which have been dispatched but haven't received a
       response.
+    dispatchDeadline: The deadline for requests sent to the worker. If the
+      worker does not respond by this deadline then the request is cancelled
+      and the attempt is marked as a `DEADLINE_EXCEEDED` failure. Cloud Tasks
+      will retry the task according to the RetryConfig.  Note that when the
+      request is cancelled, Cloud Tasks will stop listing for the response,
+      but whether the worker stops processing depends on the worker. For
+      example, if the worker is stuck, it may not react to cancelled requests.
+      The default and maximum values depend on the type of request:   * For
+      App Engine tasks, 0 indicates that the   request has the default
+      deadline. The default deadline depends on the   [scaling
+      type](https://cloud.google.com/appengine/docs/standard/go/how-instances-
+      are-managed#instance_scaling)   of the service: 10 minutes for standard
+      apps with automatic scaling, 24   hours for standard apps with manual
+      and basic scaling, and 60 minutes for   flex apps. If the request
+      deadline is set, it must be in the interval [15   seconds, 24 hours 15
+      seconds]. Regardless of the task's   `dispatch_deadline`, the app
+      handler will not run for longer than than   the service's timeout. We
+      recommend setting the `dispatch_deadline` to   at most a few seconds
+      more than the app handler's timeout. For more   information see
+      [Timeouts](https://cloud.google.com/tasks/docs/creating-appengine-
+      handlers#timeouts).  `dispatch_deadline` will be truncated to the
+      nearest millisecond. The deadline is an approximate deadline.
     firstAttempt: Output only. The status of the task's first attempt.  Only
       dispatch_time will be set. The other Attempt information is not retained
       by Cloud Tasks.
@@ -1452,12 +1478,13 @@ class Task(_messages.Message):
   appEngineHttpRequest = _messages.MessageField('AppEngineHttpRequest', 1)
   createTime = _messages.StringField(2)
   dispatchCount = _messages.IntegerField(3, variant=_messages.Variant.INT32)
-  firstAttempt = _messages.MessageField('Attempt', 4)
-  lastAttempt = _messages.MessageField('Attempt', 5)
-  name = _messages.StringField(6)
-  responseCount = _messages.IntegerField(7, variant=_messages.Variant.INT32)
-  scheduleTime = _messages.StringField(8)
-  view = _messages.EnumField('ViewValueValuesEnum', 9)
+  dispatchDeadline = _messages.StringField(4)
+  firstAttempt = _messages.MessageField('Attempt', 5)
+  lastAttempt = _messages.MessageField('Attempt', 6)
+  name = _messages.StringField(7)
+  responseCount = _messages.IntegerField(8, variant=_messages.Variant.INT32)
+  scheduleTime = _messages.StringField(9)
+  view = _messages.EnumField('ViewValueValuesEnum', 10)
 
 
 class TestIamPermissionsRequest(_messages.Message):

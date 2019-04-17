@@ -546,7 +546,8 @@ with the role are removed.
           }
 
     def Create(self, request, global_params=None):
-      r"""Creates a ServiceAccountIdentityBinding.
+      r"""Creates a.
+ServiceAccountIdentityBinding
 and returns it.
 
       Args:
@@ -574,7 +575,8 @@ and returns it.
     )
 
     def Delete(self, request, global_params=None):
-      r"""Deletes a ServiceAccountIdentityBinding.
+      r"""Deletes a.
+ServiceAccountIdentityBinding.
 
       Args:
         request: (IamProjectsServiceAccountsIdentityBindingsDeleteRequest) input message
@@ -601,7 +603,8 @@ and returns it.
     )
 
     def Get(self, request, global_params=None):
-      r"""Gets the ServiceAccountIdentityBinding.
+      r"""Gets the.
+ServiceAccountIdentityBinding
 for a service account.
 
       Args:
@@ -629,7 +632,8 @@ for a service account.
     )
 
     def List(self, request, global_params=None):
-      r"""Lists the ServiceAccountIdentityBindings.
+      r"""Lists the.
+ServiceAccountIdentityBindings
 for a service account.
 
       Args:
@@ -843,6 +847,7 @@ and returns it.
 
     def Disable(self, request, global_params=None):
       r"""Disables a ServiceAccount.
+The API is currently in alpha phase.
 
       Args:
         request: (IamProjectsServiceAccountsDisableRequest) input message
@@ -870,6 +875,7 @@ and returns it.
 
     def Enable(self, request, global_params=None):
       r"""Enables a ServiceAccount.
+ The API is currently in alpha phase.
 
       Args:
         request: (IamProjectsServiceAccountsEnableRequest) input message
@@ -923,8 +929,21 @@ and returns it.
     )
 
     def GetIamPolicy(self, request, global_params=None):
-      r"""Returns the IAM access control policy for a.
+      r"""Returns the Cloud IAM access control policy for a.
 ServiceAccount.
+
+Note: Service accounts are both
+[resources and
+identities](/iam/docs/service-accounts#service_account_permissions). This
+method treats the service account as a resource. It returns the Cloud IAM
+policy that reflects what members have access to the service account.
+
+This method does not return what resources the service account has access
+to. To see if a service account has access to a resource, call the
+`getIamPolicy` method on the target resource. For example, to view grants
+for a project, call the
+[projects.getIamPolicy](/resource-manager/reference/rest/v1/projects/getIamPolicy)
+method.
 
       Args:
         request: (IamProjectsServiceAccountsGetIamPolicyRequest) input message
@@ -983,7 +1002,7 @@ ServiceAccount.
 Currently, only the following fields are updatable:
 `display_name` and `description`.
 
-Only fields specified in the request are garaunteed to be returned in
+Only fields specified in the request are guaranteed to be returned in
 the response. Other fields in the response may be empty.
 
 Note: The field mask is required.
@@ -1013,8 +1032,22 @@ Note: The field mask is required.
     )
 
     def SetIamPolicy(self, request, global_params=None):
-      r"""Sets the IAM access control policy for a.
+      r"""Sets the Cloud IAM access control policy for a.
 ServiceAccount.
+
+Note: Service accounts are both
+[resources and
+identities](/iam/docs/service-accounts#service_account_permissions). This
+method treats the service account as a resource. Use it to grant members
+access to the service account, such as when they need to impersonate it.
+
+This method does not grant the service account access to other resources,
+such as projects. To grant a service account access to resources, include
+the service account in the Cloud IAM policy for the desired resource, then
+call the appropriate `setIamPolicy` method on the target resource. For
+example, to grant a service account access to a project, call the
+[projects.setIamPolicy](/resource-manager/reference/rest/v1/projects/setIamPolicy)
+method.
 
       Args:
         request: (IamProjectsServiceAccountsSetIamPolicyRequest) input message
@@ -1041,7 +1074,11 @@ ServiceAccount.
     )
 
     def SignBlob(self, request, global_params=None):
-      r"""Signs a blob using a service account's system-managed private key.
+      r"""**Note**: This method is in the process of being deprecated. Call the.
+[`signBlob()`](/iam/credentials/reference/rest/v1/projects.serviceAccounts/signBlob)
+method of the Cloud IAM Service Account Credentials API instead.
+
+Signs a blob using a service account's system-managed private key.
 
       Args:
         request: (IamProjectsServiceAccountsSignBlobRequest) input message
@@ -1068,7 +1105,11 @@ ServiceAccount.
     )
 
     def SignJwt(self, request, global_params=None):
-      r"""Signs a JWT using a service account's system-managed private key.
+      r"""**Note**: This method is in the process of being deprecated. Call the.
+[`signJwt()`](/iam/credentials/reference/rest/v1/projects.serviceAccounts/signJwt)
+method of the Cloud IAM Service Account Credentials API instead.
+
+Signs a JWT using a service account's system-managed private key.
 
 If no expiry time (`exp`) is provided in the `SignJwtRequest`, IAM sets an
 an expiry time of one hour by default. If you request an expiry time of
@@ -1126,8 +1167,40 @@ for a ServiceAccount.
         supports_download=False,
     )
 
+    def Undelete(self, request, global_params=None):
+      r"""Restores a deleted ServiceAccount.
+This is to be used as an action of last resort.  A service account may
+not always be restorable.
+
+      Args:
+        request: (IamProjectsServiceAccountsUndeleteRequest) input message
+        global_params: (StandardQueryParameters, default: None) global arguments
+      Returns:
+        (UndeleteServiceAccountResponse) The response message.
+      """
+      config = self.GetMethodConfig('Undelete')
+      return self._RunMethod(
+          config, request, global_params=global_params)
+
+    Undelete.method_config = lambda: base_api.ApiMethodInfo(
+        flat_path=u'v1/projects/{projectsId}/serviceAccounts/{serviceAccountsId}:undelete',
+        http_method=u'POST',
+        method_id=u'iam.projects.serviceAccounts.undelete',
+        ordered_params=[u'name'],
+        path_params=[u'name'],
+        query_params=[],
+        relative_path=u'v1/{+name}:undelete',
+        request_field=u'undeleteServiceAccountRequest',
+        request_type_name=u'IamProjectsServiceAccountsUndeleteRequest',
+        response_type_name=u'UndeleteServiceAccountResponse',
+        supports_download=False,
+    )
+
     def Update(self, request, global_params=None):
-      r"""Updates a ServiceAccount.
+      r"""Note: This method is in the process of being deprecated. Use.
+PatchServiceAccount instead.
+
+Updates a ServiceAccount.
 
 Currently, only the following fields are updatable:
 `display_name` .

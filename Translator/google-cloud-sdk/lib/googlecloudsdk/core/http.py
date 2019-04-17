@@ -14,8 +14,6 @@
 # limitations under the License.
 
 """A module to get an unauthenticated http object."""
-# TODO(b/71388306): Unskip pytype on this file.
-# pytype: skip-file
 
 from __future__ import absolute_import
 from __future__ import division
@@ -32,6 +30,7 @@ from googlecloudsdk.core import http_proxy
 from googlecloudsdk.core import log
 from googlecloudsdk.core import metrics
 from googlecloudsdk.core import properties
+from googlecloudsdk.core.console import console_attr
 from googlecloudsdk.core.console import console_io
 from googlecloudsdk.core.util import encoding
 from googlecloudsdk.core.util import platforms
@@ -154,6 +153,7 @@ def MakeUserAgentString(cmd_path=None):
           ' interactive/{is_interactive}'
           ' from-script/{from_script}'
           ' python/{py_version}'
+          ' term/{term}'
           ' {ua_fragment}').format(
               version=config.CLOUD_SDK_VERSION.replace(' ', '_'),
               cmd=(cmd_path or properties.VALUES.metrics.command_name.Get()),
@@ -164,7 +164,8 @@ def MakeUserAgentString(cmd_path=None):
                                                       heuristic=True),
               py_version=platform.python_version(),
               ua_fragment=platforms.Platform.Current().UserAgentFragment(),
-              from_script=console_io.IsRunFromShellScript())
+              from_script=console_io.IsRunFromShellScript(),
+              term=console_attr.GetConsoleAttr().GetTermIdentifier())
 
 
 def GetDefaultTimeout():

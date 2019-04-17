@@ -101,10 +101,11 @@ class AuthProvider(_messages.Message):
     jwksUri: URL of the provider's public key set to validate signature of the
       JWT. See [OpenID Discovery](https://openid.net/specs/openid-connect-
       discovery-1_0.html#ProviderMetadata). Optional if the key set document:
-      - can be retrieved from    [OpenID Discovery](https://openid.net/specs
-      /openid-connect-discovery-1_0.html    of the issuer.  - can be inferred
-      from the email domain of the issuer (e.g. a Google service account).
-      Example: https://www.googleapis.com/oauth2/v1/certs
+      - can be retrieved from    [OpenID
+      Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html of
+      the issuer.  - can be inferred from the email domain of the issuer (e.g.
+      a Google  service account).  Example:
+      https://www.googleapis.com/oauth2/v1/certs
   """
 
   audiences = _messages.StringField(1)
@@ -247,8 +248,8 @@ class BackendRule(_messages.Message):
         Request path: /api/company/widgetworks/user/johndoe     Translated:
         https://example.cloudfunctions.net/getUser?cid=widgetworks&uid=johndoe
         Request path: /api/company/widgetworks/user/johndoe?timezone=EST
-        Translated:   https://example.cloudfunctions.net/getUser?timezone=EST&
-        cid=widgetworks&uid=johndoe
+        Translated:     https://example.cloudfunctions.net/getUser?timezone=ES
+        T&cid=widgetworks&uid=johndoe
       APPEND_PATH_TO_ADDRESS: The request path will be appended to the backend
         address.  # Examples  Given the following operation config:
         Method path:        /api/company/{cid}/user/{uid}     Backend address:
@@ -257,8 +258,8 @@ class BackendRule(_messages.Message):
         /api/company/widgetworks/user/johndoe     Translated:
         https://example.appspot.com/api/company/widgetworks/user/johndoe
         Request path: /api/company/widgetworks/user/johndoe?timezone=EST
-        Translated:   https://example.appspot.com/api/company/widgetworks/user
-        /johndoe?timezone=EST
+        Translated:     https://example.appspot.com/api/company/widgetworks/us
+        er/johndoe?timezone=EST
     """
     PATH_TRANSLATION_UNSPECIFIED = 0
     CONSTANT_ADDRESS = 1
@@ -695,10 +696,11 @@ class Http(_messages.Message):
   REST API methods.
 
   Fields:
-    fullyDecodeReservedExpansion: When set to true, URL path parmeters will be
-      fully URI-decoded except in cases of single segment matches in reserved
-      expansion, where "%2F" will be left encoded.  The default behavior is to
-      not decode RFC 6570 reserved characters in multi segment matches.
+    fullyDecodeReservedExpansion: When set to true, URL path parameters will
+      be fully URI-decoded except in cases of single segment matches in
+      reserved expansion, where "%2F" will be left encoded.  The default
+      behavior is to not decode RFC 6570 reserved characters in multi segment
+      matches.
     rules: A list of HTTP configuration rules that apply to individual API
       methods.  **NOTE:** All service configuration rules follow "last one
       wins" order.
@@ -1673,29 +1675,7 @@ class PublishedService(_messages.Message):
 
 
 class Quota(_messages.Message):
-  r"""Quota configuration helps to achieve fairness and budgeting in service
-  usage.  The quota configuration works this way: - The service configuration
-  defines a set of metrics. - For API calls, the quota.metric_rules maps
-  methods to metrics with   corresponding costs. - The quota.limits defines
-  limits on the metrics, which will be used for   quota checks at runtime.  An
-  example quota configuration in yaml format:     quota:      limits:       -
-  name: apiWriteQpsPerProject        metric:
-  library.googleapis.com/write_calls        unit: "1/min/{project}"  # rate
-  limit for consumer projects        values:          STANDARD: 10000        #
-  The metric rules bind all methods to the read_calls metric,      # except
-  for the UpdateBook and DeleteBook methods. These two methods      # are
-  mapped to the write_calls metric, with the UpdateBook method      #
-  consuming at twice rate as the DeleteBook method.      metric_rules:      -
-  selector: "*"        metric_costs:
-  library.googleapis.com/read_calls: 1      - selector:
-  google.example.library.v1.LibraryService.UpdateBook        metric_costs:
-  library.googleapis.com/write_calls: 2      - selector:
-  google.example.library.v1.LibraryService.DeleteBook        metric_costs:
-  library.googleapis.com/write_calls: 1   Corresponding Metric definition:
-  metrics:      - name: library.googleapis.com/read_calls        display_name:
-  Read requests        metric_kind: DELTA        value_type: INT64       -
-  name: library.googleapis.com/write_calls        display_name: Write requests
-  metric_kind: DELTA        value_type: INT64
+  r"""A Quota object.
 
   Fields:
     limits: List of `QuotaLimit` definitions for the service.

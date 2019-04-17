@@ -176,9 +176,9 @@ class SpannerV1(base_api.BaseApiClient):
         method_id=u'spanner.projects.instances.backups.create',
         ordered_params=[u'parent'],
         path_params=[u'parent'],
-        query_params=[],
+        query_params=[u'backupId'],
         relative_path=u'v1/{+parent}/backups',
-        request_field=u'createBackupRequest',
+        request_field=u'backup',
         request_type_name=u'SpannerProjectsInstancesBackupsCreateRequest',
         response_type_name=u'Operation',
         supports_download=False,
@@ -284,7 +284,7 @@ class SpannerV1(base_api.BaseApiClient):
         method_id=u'spanner.projects.instances.backups.list',
         ordered_params=[u'parent'],
         path_params=[u'parent'],
-        query_params=[u'filter', u'orderBy', u'pageSize', u'pageToken'],
+        query_params=[u'filter', u'pageSize', u'pageToken'],
         relative_path=u'v1/{+parent}/backups',
         request_field='',
         request_type_name=u'SpannerProjectsInstancesBackupsListRequest',
@@ -311,9 +311,9 @@ class SpannerV1(base_api.BaseApiClient):
         method_id=u'spanner.projects.instances.backups.patch',
         ordered_params=[u'name'],
         path_params=[u'name'],
-        query_params=[],
+        query_params=[u'updateMask'],
         relative_path=u'v1/{+name}',
-        request_field=u'updateBackupRequest',
+        request_field=u'backup',
         request_type_name=u'SpannerProjectsInstancesBackupsPatchRequest',
         response_type_name=u'Backup',
         supports_download=False,
@@ -560,6 +560,38 @@ is the parent resource, without the operations collection id.
       super(SpannerV1.ProjectsInstancesDatabasesSessionsService, self).__init__(client)
       self._upload_configs = {
           }
+
+    def BatchCreate(self, request, global_params=None):
+      r"""Creates multiple new sessions. If the requested number of sessions would.
+cause the database to exceed its session limit, returns a
+RESOURCE_EXHAUSTED error.
+
+This API can be used to initialize a session cache on the clients.
+See https://goo.gl/TgSFN2 for best practices on session cache management.
+
+      Args:
+        request: (SpannerProjectsInstancesDatabasesSessionsBatchCreateRequest) input message
+        global_params: (StandardQueryParameters, default: None) global arguments
+      Returns:
+        (BatchCreateSessionsResponse) The response message.
+      """
+      config = self.GetMethodConfig('BatchCreate')
+      return self._RunMethod(
+          config, request, global_params=global_params)
+
+    BatchCreate.method_config = lambda: base_api.ApiMethodInfo(
+        flat_path=u'v1/projects/{projectsId}/instances/{instancesId}/databases/{databasesId}/sessions:batchCreate',
+        http_method=u'POST',
+        method_id=u'spanner.projects.instances.databases.sessions.batchCreate',
+        ordered_params=[u'database'],
+        path_params=[u'database'],
+        query_params=[],
+        relative_path=u'v1/{+database}/sessions:batchCreate',
+        request_field=u'batchCreateSessionsRequest',
+        request_type_name=u'SpannerProjectsInstancesDatabasesSessionsBatchCreateRequest',
+        response_type_name=u'BatchCreateSessionsResponse',
+        supports_download=False,
+    )
 
     def BeginTransaction(self, request, global_params=None):
       r"""Begins a new transaction. This step can often be skipped:.

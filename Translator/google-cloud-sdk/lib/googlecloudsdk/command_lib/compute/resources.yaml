@@ -32,18 +32,6 @@ zone:
 
 # resource name parameters
 
-allocation:
-  name: allocation
-  collection: compute.allocations
-  attributes:
-  - *project
-  - *zone
-  - &allocation
-    parameter_name: allocation
-    attribute_name: allocation
-    help:
-      The name of the Google Compute Engine zonal allocation.
-
 commitment:
   name: commitment
   collection: compute.regionCommitments
@@ -112,6 +100,18 @@ node_template:
   - parameter_name: nodeTemplate
     attribute_name: node_template
     help: The name of the Google Compute Engine node template.
+
+reservation:
+  name: reservation
+  collection: compute.reservations
+  attributes:
+  - *project
+  - *zone
+  - &reservation
+    parameter_name: reservation
+    attribute_name: reservation
+    help:
+      The name of the Google Compute Engine reservation.
 
 subnet:
   name: subnetwork

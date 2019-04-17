@@ -39,8 +39,6 @@
         name: django
         state: present
 
-
-
     - name: ansible create directory 
       file:
         path: /home/ansible/projekt
@@ -50,6 +48,30 @@
       synchronize:
         src: Neu.txt
         dest: /home/ansible/Neu.txt
+
+    - git:
+        repo: https://github.com/as14df/CloudComputingProject.git
+        dest: /home/ansible/projekt
+
+    - name: create directory for credential file
+      file:
+        path: /home/ansible/projekt/CloudComputingProject/Translator/UserSpecific
+        state: directory
+
+    - name: Transfer credential file
+      synchronize:
+        src: 'My First Project-03c049b89fb5.json'
+        dest: /home/ansible/projekt/CloudComputingProject/Translator/UserSpecific/'My First Project-03c049b89fb5.json'
+
+    #- name: Install google sdk
+      #command: ./google-cloud-sdk/install.sh
+      #args:
+        #chdir: /home/ansible/projekt/CloudComputingProject/Translator/
+
+    - name: Install google translate api
+      command: export GOOGLE_APPLICATION_CREDENTIALS=/home/ansible/projekt/CloudComputingProject/Translator/UserSpecific/'My First Project-03c049b89fb5.json'
+      args:
+        chdir: /alessa/snap
         
 
 

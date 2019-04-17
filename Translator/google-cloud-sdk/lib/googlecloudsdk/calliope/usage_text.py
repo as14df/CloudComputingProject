@@ -664,7 +664,7 @@ def GetArgSections(arguments, is_root):
       dests.add(arg.dest)
     if category not in categories:
       categories[category] = set()
-    categories[category].add(arg)  # pytype: disable=attribute-error
+    categories[category].add(arg)
 
   # Collect the priority sections first in order:
   #   POSITIONAL ARGUMENTS, REQUIRED, COMMON, OTHER, and categorized.
@@ -865,6 +865,8 @@ def _WriteUncategorizedTable(command, elements, element_type, writer):
       element_type=element_type, group=' '.join(command.GetPath())))
   writer.write('---------------------- | ---\n')
   for element in sorted(elements, key=lambda e: e.name):
+    if element.IsHidden():
+      continue
     writer.write('{name} | {description}\n'.format(
         name=element.name.replace('_', '-'), description=element.short_help))
 

@@ -120,7 +120,7 @@ class CreateGA(base.CreateCommand):
 
 
 @base.ReleaseTracks(base.ReleaseTrack.BETA)
-class CreateBeta(base.CreateCommand):
+class CreateBeta(CreateGA):
   """Create a new Cloud ML Engine version.
 
   Creates a new version of a Cloud ML Engine model.
@@ -132,7 +132,7 @@ class CreateBeta(base.CreateCommand):
   @staticmethod
   def Args(parser):
     _AddCreateArgs(parser)
-    flags.MACHINE_TYPE.AddToParser(parser)
+    flags.AddMachineTypeFlagToParser(parser)
 
   def Run(self, args):
     versions_client = versions_api.VersionsClient()
@@ -168,8 +168,8 @@ class CreateAlpha(base.CreateCommand):
   @staticmethod
   def Args(parser):
     _AddCreateArgs(parser)
-    flags.ALPHA_MACHINE_TYPE.AddToParser(parser)
     flags.SERVICE_ACCOUNT.AddToParser(parser)
+    flags.AddMachineTypeFlagToParser(parser)
     flags.AddUserCodeArgs(parser)
     flags.GetAcceleratorFlag().AddToParser(parser)
 

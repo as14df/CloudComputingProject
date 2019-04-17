@@ -8,7 +8,11 @@ platform/bq/bigquery_client.py
 platform/bq/bq.py
 platform/bq/bq_auth_flags.py
 platform/bq/bq_flags.py
+platform/bq/bq_utils.py
 platform/bq/discovery/httpswwwgoogleapiscom.bigquery.v2.rest.json
+platform/bq/discovery_next/bigquery.json
+platform/bq/discovery_next/bigqueryconnection-discovery.json
+platform/bq/discovery_next/routines-discovery.json
 platform/bq/remove_pyreadline.py
 platform/bq/table_formatter.py
 platform/bq/table_formatter_test.py
@@ -52,6 +56,7 @@ platform/bq/third_party/google_reauth/reauth_creds.py
 platform/bq/third_party/googleapiclient/LICENSE
 platform/bq/third_party/googleapiclient/__init__.py
 platform/bq/third_party/googleapiclient/_auth.py
+platform/bq/third_party/googleapiclient/_helpers.py
 platform/bq/third_party/googleapiclient/channel.py
 platform/bq/third_party/googleapiclient/discovery.py
 platform/bq/third_party/googleapiclient/discovery_cache/__init__.py

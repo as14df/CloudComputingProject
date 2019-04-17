@@ -286,10 +286,12 @@ class LongRunningRecognizeRequest(_messages.Message):
     audio: *Required* The audio data to be recognized.
     config: *Required* Provides information to the recognizer that specifies
       how to process the request.
+    name: *Optional* The name of the model to use for recognition.
   """
 
   audio = _messages.MessageField('RecognitionAudio', 1)
   config = _messages.MessageField('RecognitionConfig', 2)
+  name = _messages.StringField(3)
 
 
 class LongRunningRecognizeResponse(_messages.Message):
@@ -588,8 +590,8 @@ class RecognitionConfig(_messages.Message):
       `RecognitionAudio` messages. Valid values are: 8000-48000. 16000 is
       optimal. For best results, set the sampling rate of the audio source to
       16000 Hz. If that's not possible, use the native sample rate of the
-      audio source (instead of re-sampling). This field is optional for `FLAC`
-      and `WAV` audio files and required for all other audio formats. For
+      audio source (instead of re-sampling). This field is optional for FLAC
+      and WAV audio files, but is required for all other audio formats. For
       details, see AudioEncoding.
     speechContexts: *Optional* array of SpeechContext. A means to provide
       context to assist the speech recognition. For more information, see
@@ -813,10 +815,12 @@ class RecognizeRequest(_messages.Message):
     audio: *Required* The audio data to be recognized.
     config: *Required* Provides information to the recognizer that specifies
       how to process the request.
+    name: *Optional* The name of the model to use for recognition.
   """
 
   audio = _messages.MessageField('RecognitionAudio', 1)
   config = _messages.MessageField('RecognitionConfig', 2)
+  name = _messages.StringField(3)
 
 
 class RecognizeResponse(_messages.Message):
@@ -1016,6 +1020,20 @@ class SpeechProjectsLocationsDatasetsRefreshDataRequest(_messages.Message):
 
   name = _messages.StringField(1, required=True)
   refreshDataRequest = _messages.MessageField('RefreshDataRequest', 2)
+
+
+class SpeechProjectsLocationsLogDataRequest(_messages.Message):
+  r"""A SpeechProjectsLocationsLogDataRequest object.
+
+  Fields:
+    bucketName: Optional. Bucket name to delete all logs from. If empty, all
+      logs are deleted.
+    parent: Required. Resource name of the parent. Has the format :-
+      "projects/{project_id}/locations/{location_id}"
+  """
+
+  bucketName = _messages.StringField(1)
+  parent = _messages.StringField(2, required=True)
 
 
 class SpeechProjectsLocationsLogDataStatsListRequest(_messages.Message):

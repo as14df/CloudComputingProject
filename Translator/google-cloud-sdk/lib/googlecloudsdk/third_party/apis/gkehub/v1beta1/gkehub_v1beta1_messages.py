@@ -91,8 +91,7 @@ class GkehubProjectsLocationsGlobalMembershipsListRequest(_messages.Message):
       /foo-proj/locations/global/membership/bar  - Filter by labels:   -
       Resources that have a key called `foo`     labels.foo:*   - Resources
       that have a key called `foo` whose value is `bar`     labels.foo = bar
-      - Filter by status:    - Members in CREATING status.      status =
-      CREATING
+      - Filter by state:    - Members in CREATING state.      state = CREATING
     orderBy: Field to use to sort the list.
     pageSize: When requesting a 'page' of resources, `page_size` specifies
       number of resources to return. If unspecified or set to 0, all resources
@@ -284,7 +283,8 @@ class ListLocationsResponse(_messages.Message):
 
 
 class ListMembershipsResponse(_messages.Message):
-  r"""Response message for the `MembershipService.ListMemberships` method.
+  r"""Response message for the `GkeHubMembershipService.ListMemberships`
+  method.
 
   Fields:
     nextPageToken: A token to request the next page of resources from the
@@ -399,9 +399,9 @@ class Membership(_messages.Message):
   Fields:
     createTime: Output only. Timestamp for when the Membership was created.
     deleteTime: Output only. Timestamp for when the Membership was deleted.
-    description: An optional description of this membership, limited to 2048
+    description: A required description of this membership, limited to 63
       characters.
-    endpoint: Endpoint information to reach this member.
+    endpoint: A MembershipEndpoint attribute.
     labels: GCP labels for this membership.
     name: Output only. The unique name of this domain resource in the format:
       `projects/[project_id]/locations/global/memberships/[membership_id]`.
@@ -412,7 +412,7 @@ class Membership(_messages.Message):
       alphanumeric characters or `-`   3. It must start and end with an
       alphanumeric character I.e. `membership_id` must match the regex:
       `[a-z0-9]([-a-z0-9]*[a-z0-9])?` with at most 63 characters.
-    status: Output only. Status of the Membership resource.
+    state: Output only. State of the Membership resource.
     updateTime: Output only. Timestamp for when the Membership was last
       updated.
   """
@@ -447,7 +447,7 @@ class Membership(_messages.Message):
   endpoint = _messages.MessageField('MembershipEndpoint', 4)
   labels = _messages.MessageField('LabelsValue', 5)
   name = _messages.StringField(6)
-  status = _messages.MessageField('MembershipStatus', 7)
+  state = _messages.MessageField('MembershipState', 7)
   updateTime = _messages.StringField(8)
 
 
@@ -455,44 +455,33 @@ class MembershipEndpoint(_messages.Message):
   r"""MembershipEndpoint contains the information to reach a member.
 
   Fields:
+    gcpResourceLink: If this API server is also a Google service provide the
+      self link of its GCP resource. For example, the FQDN to a GKE Cluster
+      that backs this Membership:
+      https://container.googleapis.com/v1/projects/x/zones/us-
+      west1-a/clusters/c0 It can be at the most 1000 characters in length.
     oidcConfig: OIDC configuration to use to authenticate users against with
       this member.
-    resourceId: Unique per-project identification for this endpoint (in space
-      and time) to be provided by the user at creation time. While a self_link
-      is optional for endpoints that may not be on GCP, all membership
-      endpoints must provide a unique resource_id string. It is not mutable
-      after creation. See go/membership-uid for more details. It can be at the
-      most 1000 characters in length.
-    selfLink: If this API server is also a Google service provide its
-      OnePlatform 'name'. For example, the FQDN to a GKE Cluster that backs
-      this Membership: https://container.googleapis.com/v1/projects/x/zones
-      /us-west1-a/clusters/c0 It can be at the most 1000 characters in length.
   """
 
-  oidcConfig = _messages.MessageField('OidcConfig', 1)
-  resourceId = _messages.StringField(2)
-  selfLink = _messages.StringField(3)
+  gcpResourceLink = _messages.StringField(1)
+  oidcConfig = _messages.MessageField('OidcConfig', 2)
 
 
-class MembershipStatus(_messages.Message):
-  r"""Status of the Membership resource.
+class MembershipState(_messages.Message):
+  r"""State of the Membership resource.
 
   Enums:
-    CodeValueValuesEnum: Code indicating the status of the Membership
-      resource.
-
-  Messages:
-    DetailsValue: Structured information about the problem.
+    CodeValueValuesEnum: Code indicating the state of the Membership resource.
 
   Fields:
-    code: Code indicating the status of the Membership resource.
+    code: Code indicating the state of the Membership resource.
     description: Human readable description of the issue.
-    details: Structured information about the problem.
-    updateTime: The last update time of this status by the controllers
+    updateTime: The last update time of this state by the controllers
   """
 
   class CodeValueValuesEnum(_messages.Enum):
-    r"""Code indicating the status of the Membership resource.
+    r"""Code indicating the state of the Membership resource.
 
     Values:
       CODE_UNSPECIFIED: Not set.
@@ -508,35 +497,9 @@ class MembershipStatus(_messages.Message):
     DELETING = 3
     UPDATING = 4
 
-  @encoding.MapUnrecognizedFields('additionalProperties')
-  class DetailsValue(_messages.Message):
-    r"""Structured information about the problem.
-
-    Messages:
-      AdditionalProperty: An additional property for a DetailsValue object.
-
-    Fields:
-      additionalProperties: Properties of the object. Contains field @type
-        with type URL.
-    """
-
-    class AdditionalProperty(_messages.Message):
-      r"""An additional property for a DetailsValue object.
-
-      Fields:
-        key: Name of the additional property.
-        value: A extra_types.JsonValue attribute.
-      """
-
-      key = _messages.StringField(1)
-      value = _messages.MessageField('extra_types.JsonValue', 2)
-
-    additionalProperties = _messages.MessageField('AdditionalProperty', 1, repeated=True)
-
   code = _messages.EnumField('CodeValueValuesEnum', 1)
   description = _messages.StringField(2)
-  details = _messages.MessageField('DetailsValue', 3)
-  updateTime = _messages.StringField(4)
+  updateTime = _messages.StringField(3)
 
 
 class OidcConfig(_messages.Message):
@@ -546,6 +509,10 @@ class OidcConfig(_messages.Message):
   Enums:
     TokenEndpointRoutabilityValueValuesEnum: Connection method to be used when
       accessing the token endpoint.
+
+  Messages:
+    ExtraParametersValue: Additional parameters required by the Identity
+      Provider
 
   Fields:
     aud: Audience claims to request when fetching the id_token - should
@@ -558,9 +525,11 @@ class OidcConfig(_messages.Message):
       with Identity Provider.
     clientSecret: Client Secret for the OAuth client to be used when
       communicating with Identity Provider.
+    extraParameters: Additional parameters required by the Identity Provider
     issuer: Identity Provider that needs to issue tokens accepted by this
       cluster, ex. https://accounts.google.com. Should match the --oidc-
       issuer-url configured for the cluster.
+    scopes: Scopes to be requested from Identity Provider
     tokenEndpoint: Endpoint to be used to obtain the id_token, ex.
       https://www.googleapis.com/oauth2/v4/token. See https://openid.net/specs
       /openid-connect-core-1_0.html#TokenEndpoint
@@ -581,13 +550,40 @@ class OidcConfig(_messages.Message):
     PUBLIC = 1
     GKE_CONNECT = 2
 
+  @encoding.MapUnrecognizedFields('additionalProperties')
+  class ExtraParametersValue(_messages.Message):
+    r"""Additional parameters required by the Identity Provider
+
+    Messages:
+      AdditionalProperty: An additional property for a ExtraParametersValue
+        object.
+
+    Fields:
+      additionalProperties: Additional properties of type ExtraParametersValue
+    """
+
+    class AdditionalProperty(_messages.Message):
+      r"""An additional property for a ExtraParametersValue object.
+
+      Fields:
+        key: Name of the additional property.
+        value: A string attribute.
+      """
+
+      key = _messages.StringField(1)
+      value = _messages.StringField(2)
+
+    additionalProperties = _messages.MessageField('AdditionalProperty', 1, repeated=True)
+
   aud = _messages.StringField(1, repeated=True)
   authorizationEndpoint = _messages.StringField(2)
   clientId = _messages.StringField(3)
   clientSecret = _messages.BytesField(4)
-  issuer = _messages.StringField(5)
-  tokenEndpoint = _messages.StringField(6)
-  tokenEndpointRoutability = _messages.EnumField('TokenEndpointRoutabilityValueValuesEnum', 7)
+  extraParameters = _messages.MessageField('ExtraParametersValue', 5)
+  issuer = _messages.StringField(6)
+  scopes = _messages.StringField(7, repeated=True)
+  tokenEndpoint = _messages.StringField(8)
+  tokenEndpointRoutability = _messages.EnumField('TokenEndpointRoutabilityValueValuesEnum', 9)
 
 
 class Operation(_messages.Message):
