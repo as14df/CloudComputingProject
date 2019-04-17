@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="../../ansibleKurs/_doc/css/main_dark.css">
+    <link rel="stylesheet"
+      href="../../ansibleKurs/_doc/css/dracula_dark.css">
+    <script src="../../ansibleKurs/_doc/js/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <title>Aufgabe-InfraAsCode.md</title>
+</head>
+<body>
+<h1>Aufgabe zu Infrastructure as Code</h1>
+
+<ul>
+<li><p>Erstellen Sie eine Ubuntu VM in der Cloud und starten diese 
+Tragen Sie beim Erstellen Ihren Public Key ein, und testen das über einen ssh Login <br />
+Ist Ihnen klar wozu die Host-key Checking Abfrage dient? 
+Lassen Sie sich die Instanz anzeigen (console oder im Terminal mit "gcloud") und notieren Sie die IP Adresse  </p></li>
+<li><p>Vorbereitung zum Arbeiten mit Ansible </p>
+
+<p>Im aktuellen Verzeichnis ist eine Vorlage für ein <a href="./hosts">hosts file</a> und ein <a href="./ansible.cfg">Konfigurations-File</a> </p>
+
+<ul>
+<li>Passen Sie das Konfigurationsfile an: 
+Einige wichtige Einstellungen sind mit "HILFREICH" markiert (suchen mit Ctrl+f)</li>
+<li>Schalten Sie das hosts key checking ab </li>
+<li>Tragen Sie den Pfad zum Inventory ein </li>
+<li>Aktivieren Sie keep<em>remote</em>files</li>
+</ul></li>
+<li><p>Loslegen mit ansible! Ganz Unten finden Sie einige wichtige Kommandozeilen-Optionen zu ansible / ansible-playbook</p></li>
+<li><p>Ansible im AdHoc Modus nutzen</p>
+
+<p>Starten Sie ansible im AdHoc Modus und führen den Befehl "df -h /" aus, um sich den Plattenplatz der Cloud VM anzeigen zu lassen</p>
+
+<p>Sie brauchen dazu das Inventory File, indem die IP der Cloud-VM eingetragen wird <br />
+Sie müssen ansible.cfg anpassen  </p>
+
+<ul>
+<li>Pfad zum inventory File eintragen</li>
+<li>Das Host Key Checking für ssh abschalten</li>
+</ul>
+
+<p>Lesen Sie sich die <a href="https://docs.ansible.com/ansible/latest/modules/shell_module.html">Beschreibung des Shell Moduls</a> durch <br />
+Rufen Sie ansible im AdHoc Modus mit dem Shell modul auf und übergeben den Befehl zum Anzeigen des Plattenplatzes</p></li>
+<li><p>Ansible mit Playbooks nutzen <br />
+Schreiben Sie ein Playbook, welches das Tool tree auf dem Cloud-VM installiert, anschliessend das Verzeichnis /home/ansible/projekt anlegt und dann lokale Datei ihrer Wahl in dieses Verzeichnis kopiert
+Tipp:  </p>
+
+<ul>
+<li>Zur Installation benötigen Sie sudo Rechte, also müssen SIe mit Ansible die Direktive "become" nutzen</li>
+<li>Machen Sie ein update vom Paket-Manager Cache vor der Installation </li>
+<li>Sie können für alle Aktionen Module von ansible nutzen. Fürs Verzeichnis anlegen und kopieren
+aus <a href="https://docs.ansible.com/ansible/latest/modules/list_of_files_modules.html">dieser Liste</a> und fürs installieren aus <a href="https://docs.ansible.com/ansible/latest/modules/list_of_packaging_modules.html">dieser</a>    </li>
+</ul></li>
+<li><p><strong>Bewertete Aufgabe: Schreiben Sie ein Playbook, dass Ihr Projekt auf der Cloud-VM installiert und startet, so dass die App von außen erreichbar ist</strong> <br />
+Dazu gehören folgende Aufgaben </p>
+
+<ul>
+<li>Code auf die Maschine bringen </li>
+<li>Django installieren </li>
+<li>Abhängigkeiten installieren </li>
+<li>Starten Sie die App</li>
+<li><p>Testen Sie die App</p></li>
+<li><p>Bonus: Starten der VM mit ansible, Konfigurieren der Firewall, so dass der Port von außen zugelassen ist
+Hierzu brauchen Sie einen zweiten "Play" im Playbook, weil ansible hier das gcloud tool auf localhost nutzen soll </p></li>
+<li>Extra Bonus: Nutzung eines Apache-Webserver mit wsgi anstatt von "runserver"</li>
+</ul>
+
+<p>Einige Tipps: </p>
+
+<ul>
+<li>Sie sollten ansible <strong>auf der Cloud VM</strong> mit Python 3 nutzen. <a href="https://docs.ansible.com/ansible/latest/reference_appendices/python_3_support.html">Infos hier</a></li>
+<li>Einstellung: ansible_python_interpreter=/usr/bin/python3 für die Cloud-VM</li>
+<li>Sie können Ihre SW durch kopieren und auspacken eines Tar Files oder durch Git Clone installieren. Bei Git Clone werden aber auf der Cloud VM die keys für git benötigt. Das ist etwas komplizierter, aber professioneller</li>
+<li>Zum Start der App können Sie mit den bei Python eingebauten Server nutzen</li>
+</ul></li>
+<li><p>Commandline Options zu ansible / ansible-playbook</p>
+
+<p>Die folgenden Optionen können miteinander kombiniert werden </p>
+
+<p>ansible -i hosts  # Angabe des Inventory Files auf der Kommandozeile <br />
+ansible -v        # verbose mode: zeigt benutztes config-file an <br />
+ansible -vvv      # .. zeigt zusätzlich benutztes inventory an  </p></li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,57 @@
+---
+# Beginn des Plays
+- name: Main Play 
+  # Abbildung auf host liste: [all|localhost|gruppennamen|einzelne hosts]
+  hosts: ServerGruppe
+  # Direktiven für den host
+  become: true
+
+  # Beginn der Task LISTE
+  tasks: 
+    # Listenelemente sind eingerückt und beginnem mit '-'
+    # Es enthlt ein Dictionary mit key value Paaren
+    - name: install tree
+      apt: 
+        name: tree
+        state: present
+        update_cache: yes 
+      # Direktive für task
+      become: true
+
+    - name: install GIT
+      apt: 
+        name: git
+        state: present
+        update_cache: yes 
+      # Direktive für task
+      become: true
+
+    - name: install pip
+      apt: 
+        name: python3-pip
+        state: present
+        update_cache: yes 
+      # Direktive für task
+      become: true
+
+    - name: install django
+      pip:
+        name: django
+        state: present
+
+
+
+    - name: ansible create directory 
+      file:
+        path: /home/ansible/projekt
+        state: directory
+
+    - name: Transfer cool Stuff
+      synchronize:
+        src: Neu.txt
+        dest: /home/ansible/Neu.txt
+        
+
+
+
+    
