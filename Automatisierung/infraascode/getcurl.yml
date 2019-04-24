@@ -55,23 +55,22 @@
 
     - name: create directory for credential file
       file:
-        path: /home/ansible/projekt/CloudComputingProject/Translator/UserSpecific
+        path: /home/ansible/projekt/Translator/UserSpecific
         state: directory
 
     - name: Transfer credential file
       synchronize:
-        src: 'My First Project-03c049b89fb5.json'
-        dest: /home/ansible/projekt/CloudComputingProject/Translator/UserSpecific/'My First Project-03c049b89fb5.json'
+        src: /home/alessa/Documents/CloudComputing/CloudComputingProject/Automatisierung/infraascode/My_first_Project-03c049b89fb5.json
+        dest: /home/ansible/projekt/Translator/UserSpecific/
 
     #- name: Install google sdk
       #command: ./google-cloud-sdk/install.sh
       #args:
-        #chdir: /home/ansible/projekt/CloudComputingProject/Translator/
+        #chdir: /home/ansible/projekt/Translator/
 
     - name: Install google translate api
-      command: export GOOGLE_APPLICATION_CREDENTIALS=/home/ansible/projekt/CloudComputingProject/Translator/UserSpecific/'My First Project-03c049b89fb5.json'
-      args:
-        chdir: /alessa/snap
+      shell: export GOOGLE_APPLICATION_CREDENTIALS="/home/ansible/projekt/Translator/UserSpecific/My_first_Project-03c049b89fb5.json"
+
         
 
 

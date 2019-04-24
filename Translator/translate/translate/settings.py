@@ -32,7 +32,7 @@ SECRET_KEY = 'rng^*d37^=n)mj#1)3e5i7s95&y1u0o^444tnsy@we)+i)58%!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # TODO: hier müssen Sie Ihre Anwednung definieren
 
