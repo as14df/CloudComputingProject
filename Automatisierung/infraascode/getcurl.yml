@@ -1,21 +1,16 @@
 ---
 # Beginn des Plays
 - name: Main Play 
-  # Abbildung auf host liste: [all|localhost|gruppennamen|einzelne hosts]
   hosts: ServerGruppe
-  # Direktiven für den host
   become: true
 
   # Beginn der Task LISTE
   tasks: 
-    # Listenelemente sind eingerückt und beginnem mit '-'
-    # Es enthlt ein Dictionary mit key value Paaren
     - name: install tree
       apt: 
         name: tree
         state: present
         update_cache: yes 
-      # Direktive für task
       become: true
 
     - name: install GIT
@@ -23,7 +18,6 @@
         name: git
         state: present
         update_cache: yes 
-      # Direktive für task
       become: true
 
     - name: install pip
@@ -31,7 +25,6 @@
         name: python3-pip
         state: present
         update_cache: yes 
-      # Direktive für task
       become: true
 
     - name: install django
@@ -39,19 +32,25 @@
         name: django
         state: present
 
+    - name: install pexpect
+      pip:
+        name: pexpect
+        state: present
+      become: true
+
     - name: ansible create directory 
       file:
         path: /home/ansible/projekt
         state: directory
 
-    - name: Transfer cool Stuff
-      synchronize:
-        src: Neu.txt
-        dest: /home/ansible/Neu.txt
-
     - git:
         repo: https://github.com/as14df/CloudComputingProject.git
         dest: /home/ansible/projekt
+
+    - name: install django
+      pip:
+        name: django
+        state: present
 
     - name: create directory for credential file
       file:
@@ -60,16 +59,46 @@
 
     - name: Transfer credential file
       synchronize:
-        src: /home/alessa/Documents/CloudComputing/CloudComputingProject/Automatisierung/infraascode/My_first_Project-03c049b89fb5.json
+        src: /home/alessa/Documents/CloudComputing/CloudComputingProject/Automatisierung/infraascode/dienstkonto1.json
         dest: /home/ansible/projekt/Translator/UserSpecific/
 
-    #- name: Install google sdk
-      #command: ./google-cloud-sdk/install.sh
-      #args:
-        #chdir: /home/ansible/projekt/Translator/
+    - name: export credential file
+      shell: export GOOGLE_APPLICATION_CREDENTIALS="/home/ansible/projekt/Translator/UserSpecific/dienstkonto1.json"
+      become: true
 
-    - name: Install google translate api
-      shell: export GOOGLE_APPLICATION_CREDENTIALS="/home/ansible/projekt/Translator/UserSpecific/My_first_Project-03c049b89fb5.json"
+    - name: install google translate api
+      shell: pip3 install --upgrade google-cloud-translate
+      become: true
+
+    - name: change firewall rule allow ssh
+      command: ufw allow 22
+      become: true
+
+    - name: change firewall rule allow 80
+      command: ufw allow 80
+      become: true
+
+    - name: change firewall rule allow 443
+      command: ufw allow 443
+      become: true
+
+    - name: change firewall rule allow 8000
+      command: ufw allow 8000
+      become: true
+
+    - name: change firewall rule deny rest
+      command: ufw default deny
+      become: true
+
+    - name: enable firewall rules
+      shell: yes 'y' | ufw enable
+      become: true
+
+    - name: run Server
+      shell: python3 manage.py runserver 0.0.0.0:80
+      args:
+        chdir: /home/ansible/projekt/Translator/translate/
+      become: true 
 
         
 
