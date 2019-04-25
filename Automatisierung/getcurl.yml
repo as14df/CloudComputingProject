@@ -37,19 +37,6 @@
       args:
         chdir: /home/ansible/projekt/Translator/translate/
 
-    #- name: create directory for credential file
-      #file:
-        #path: /home/ansible/projekt/UserSpecific
-        #state: directory
-
-    #- name: Transfer credential file
-      #synchronize:
-        #src: /home/alessa/Documents/CloudComputing/CloudComputingProject/UserSpecific/dienstkonto1.json
-        #dest: /home/ansible/projekt/UserSpecific/
-
-    #- name: export credential file
-      #shell: export GOOGLE_APPLICATION_CREDENTIALS="/home/ansible/projekt/UserSpecific/dienstkonto1.json" 
-
     # change firewall rules
     - name: change firewall rules allow 22, 80, 443, deny others
       shell: |
