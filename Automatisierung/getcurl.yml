@@ -5,40 +5,23 @@
   become: true
 
   # Beginn der Task LISTE
-  tasks: 
-    - name: install tree
+  tasks:
+
+    # Installations with apt
+    - name: install tree, git, pip
       apt: 
-        name: tree
+        name: ['tree', 'git', 'python3-pip']
         state: present
-        update_cache: yes 
-      become: true
-
-    - name: install GIT
-      apt: 
-        name: git
-        state: present
-        update_cache: yes 
-      become: true
-
-    - name: install pip
-      apt: 
-        name: python3-pip
-        state: present
-        update_cache: yes 
-      become: true
-
-    - name: install django
-      pip:
-        name: django
+        update_cache: yes
+      
+    # Installations with pip    
+    - name: install django, requests, google-auth, google-cloud-translate
+      pip: 
+        name: ['django', 'requests', 'google-auth', 'google-cloud-translate']
         state: present
 
-    #- name: install pexpect
-      #pip:
-        #name: pexpect
-        #state: present
-      #become: true
-
-    - name: ansible create directory 
+    # Create directory for git project + clone project
+    - name: create directory for git + clone project
       file:
         path: /home/ansible/projekt
         state: directory
@@ -46,62 +29,42 @@
     - git:
         repo: https://github.com/as14df/CloudComputingProject.git
         dest: /home/ansible/projekt
+        force: yes
 
-    - name: install django
-      pip:
-        name: django
-        state: present
-
-    - name: create directory for credential file
-      file:
-        path: /home/ansible/projekt/UserSpecific
-        state: directory
-
-    - name: Transfer credential file
-      synchronize:
-        src: /home/alessa/Documents/CloudComputing/CloudComputingProject/UserSpecific/dienstkonto1.json
-        dest: /home/ansible/projekt/UserSpecific/
-
-    - name: export credential file
-      shell: export GOOGLE_APPLICATION_CREDENTIALS="/home/ansible/projekt/UserSpecific/dienstkonto1.json"
-      become: true
-
-    - name: install google translate api
-      shell: pip3 install --upgrade google-cloud-translate
-      become: true
-
-    - name: change firewall rule allow ssh
-      command: ufw allow 22
-      become: true
-
-    - name: change firewall rule allow 80
-      command: ufw allow 80
-      become: true
-
-    - name: change firewall rule allow 443
-      command: ufw allow 443
-      become: true
-
-    - name: change firewall rule allow 8000
-      command: ufw allow 8000
-      become: true
-
-    - name: change firewall rule deny rest
-      command: ufw default deny
-      become: true
-
-    - name: enable firewall rules
-      shell: yes 'y' | ufw enable
-      become: true
-
-    - name: run Server
-      shell: python3 manage.py runserver 0.0.0.0:80
+    # migrate database
+    - name: migrate database
+      shell: python3 manage.py migrate
       args:
         chdir: /home/ansible/projekt/Translator/translate/
-      become: true 
 
-        
+    #- name: create directory for credential file
+      #file:
+        #path: /home/ansible/projekt/UserSpecific
+        #state: directory
 
+    #- name: Transfer credential file
+      #synchronize:
+        #src: /home/alessa/Documents/CloudComputing/CloudComputingProject/UserSpecific/dienstkonto1.json
+        #dest: /home/ansible/projekt/UserSpecific/
 
+    #- name: export credential file
+      #shell: export GOOGLE_APPLICATION_CREDENTIALS="/home/ansible/projekt/UserSpecific/dienstkonto1.json" 
 
-    
+    # change firewall rules
+    - name: change firewall rules allow 22, 80, 443, deny others
+      shell: |
+        ufw allow 22
+        ufw allow 80
+        ufw allow 443
+        ufw default deny
+
+    # enable firewall
+    - name: enable firewall rules
+      shell: yes 'y' | ufw enable
+
+    # Run Server in background
+    - name: run Server
+      # open in background nohup + &1 &: open in bg + ignore exit signals
+      shell: nohup python3 manage.py runserver 0.0.0.0:80 &1 &
+      args:
+        chdir: /home/ansible/projekt/Translator/translate/
