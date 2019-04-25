@@ -1,2 +1,4 @@
 /Translator/UserSpecific/
 /Translator/translate/*.sqlite3
+/Translator/google-cloud-sdk
+/Translator/env
