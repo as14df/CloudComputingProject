@@ -1,11 +1,9 @@
 # Das Inventory
+
 # localhost kann auch im Inventory stehen
 localhost#
-# Sie können mehrere Server zu einer Gruppe zusammenfassen und dann im Playbook die Gruppe ansprechen
-[ServerGruppe]
-35.184.11.167 ansible_python_interpreter=/usr/bin/python3
 
-# Hier folgen alle Server die zu "ServerGruppe" gehören 
-# Hinter dem Servernamen können Sie Variablen für diesen Server definieren als "Leerzeichen"-getrennte Liste von Key-Value Paaren
-     
-# key=value
+# Server Gruppen:
+
+[ServerGruppe]
+35.184.196.93 ansible_python_interpreter=/usr/bin/python3 # IP Adresse der Cloud Compute Engine
