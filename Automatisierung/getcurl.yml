@@ -15,9 +15,9 @@
         update_cache: yes
       
     # Installations with pip    
-    - name: install django, requests, google-auth, google-cloud-translate
+    - name: install django, google-cloud-translate
       pip: 
-        name: ['django', 'requests', 'google-auth', 'google-cloud-translate']
+        name: ['django', 'google-cloud-translate']
         state: present
 
     # Create directory for git project + clone project
