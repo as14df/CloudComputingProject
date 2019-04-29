@@ -6,4 +6,4 @@ localhost#
 # Server Gruppen:
 
 [ServerGruppe]
-35.226.44.159 ansible_python_interpreter=/usr/bin/python3 # IP Adresse der Cloud Compute Engine
+104.154.241.132 ansible_python_interpreter=/usr/bin/python3 # IP Adresse der Cloud Compute Engine
