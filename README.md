@@ -14,18 +14,16 @@
    **export GOOGLE_APPLICATION_CREDENTIALS=YOURFILEPATH/'YOURFILENAME.json'**
 
 6. Go to **~/CloudComputing/CloudComputingProject/Translator/translate** and type in terminal:
-* **python3 manage.py migrate** # migrate database
-* **python3 manage.py runserver 0.0.0.0:80** # start server
+  * **python3 manage.py migrate** # migrate database
+  * **python3 manage.py runserver 0.0.0.0:80** # start server
 
 7. Youre done, just open your browser and type in: **<IP_ADRESS>:80/speaker** # for example: http://35.184.11.167:80/speaker/
 
-// If translating does not work, check if Google translate API is installed and install if necessary:
-   pip3 install --upgrade google-cloud-translate
    
    
 ## Get startet with ansible
 
-1. Download the subfolder **Automatisierung** under this link and unzip it on your local machine
+1. Download the subfolder **Automatisierung** under [this link](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/as14df/CloudComputingProject/tree/master/Automatisierung) and unzip it on your local machine
 
 2. Open the file **hosts** and paste the ip adress of your compute engine after **[ServerGruppe]** then save the file
 
