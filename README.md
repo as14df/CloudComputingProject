@@ -17,7 +17,7 @@
   * **python3 manage.py migrate** # migrate database
   * **python3 manage.py runserver 0.0.0.0:80** # start server
 
-7. Youre done, just open your browser and type in: **<IP_ADRESS>:80/speaker** # for example: http://35.184.11.167:80/speaker/
+7. Youre done, just open your browser and type in: **<IP_ADRESS>:80/speaker**
 
    
    
@@ -31,7 +31,7 @@
 
 4. Wait until ansible finished installation and startet the server then close the terminal
 
-5. Youre done, just open your browser and type in: **<IP_ADRESS>:80/speaker** (for example: http://35.184.11.167:80/speaker/)
+5. Youre done, just open your browser and type in: **<IP_ADRESS>:80/speaker**
 
 // Make sure that in your compute engines settings "Zugriffsbereiche für Cloud API" 
 is set to "Uneingeschränkten Zugriff auf alle Cloud-APIs zulassen"
